@@ -94,13 +94,13 @@
   .dots{display:flex;gap:4px;}
   .dots i{width:6px;height:6px;border-radius:50%;border:1px solid rgba(20,20,30,.28);background:transparent;display:block;}
   .dots i.on{background:var(--graphite);border-color:var(--graphite);}
-  .ex-reps{font-size:11px;font-weight:500;color:rgba(20,20,30,.55);}
+  .ex-reps,.ex-sets{font-size:11px;font-weight:500;color:rgba(20,20,30,.55);}
   /* inverted (white text on dark tiles: navy / dark-red) */
   .ex.inv{color:#fff;}
   .ex.inv .dots i{border-color:rgba(255,255,255,.5);}
   .ex.inv .dots i.on{background:#fff;border-color:#fff;}
   .ex.inv .ex-top .chk{background:#fff;color:var(--graphite);}
-  .ex.inv .ex-reps{color:rgba(255,255,255,.72);}
+  .ex.inv .ex-reps,.ex.inv .ex-sets{color:rgba(255,255,255,.72);}
 
   /* ---------- Ring progress ---------- */
   .rings{background:transparent;padding:14px 2px;margin:0;flex:1 1 auto;display:flex;align-items:center;justify-content:center;min-height:200px;}
@@ -446,7 +446,7 @@ function renderGrid(){
     const check = logged ? `<span class="chk">✓</span>` : ``;
     div.innerHTML=`
       <div class="ex-top"><div class="ex-name">${ex.n}</div>${check}</div>
-      <div class="ex-bottom"><div class="dots">${renderDots(ex.sets, d)}</div><div class="ex-reps num">${ex.sets}×${ex.reps}</div></div>`;
+      <div class="ex-bottom"><div class="ex-reps num">${ex.sets} × ${ex.reps}</div></div>`;
     div.onclick=()=>openExercise(ex,i);
     grid.appendChild(div);
   });
