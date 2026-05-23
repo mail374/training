@@ -80,21 +80,21 @@
   #progressPill b{color:var(--graphite);font-weight:600;}
 
   /* ---------- Exercise grid ---------- */
-  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:14px;}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px;}
   .ex{
-    background:var(--slate);border:0;border-radius:16px;color:var(--graphite);
-    padding:16px;min-height:120px;display:flex;flex-direction:column;justify-content:space-between;
+    background:var(--slate);border:0;border-radius:14px;color:var(--graphite);
+    padding:13px;min-height:104px;display:flex;flex-direction:column;justify-content:space-between;
     cursor:pointer;transition:transform .12s ease;
   }
-  .ex:active{transform:scale(.97);}
-  .ex-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;}
-  .ex-name{font-size:18px;font-weight:600;letter-spacing:-.02em;line-height:1.08;color:inherit;}
-  .ex-top .chk{flex:none;width:20px;height:20px;border-radius:50%;background:var(--graphite);color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;}
-  .ex-bottom{display:flex;align-items:flex-end;justify-content:space-between;margin-top:10px;}
-  .dots{display:flex;gap:5px;}
-  .dots i{width:7px;height:7px;border-radius:50%;border:1px solid rgba(20,20,30,.28);background:transparent;display:block;}
+  .ex:active{transform:scale(.96);}
+  .ex-top{display:flex;align-items:flex-start;justify-content:space-between;gap:6px;}
+  .ex-name{font-size:14px;font-weight:600;letter-spacing:-.02em;line-height:1.1;color:inherit;}
+  .ex-top .chk{flex:none;width:18px;height:18px;border-radius:50%;background:var(--graphite);color:#fff;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;}
+  .ex-bottom{display:flex;align-items:flex-end;justify-content:space-between;margin-top:8px;}
+  .dots{display:flex;gap:4px;}
+  .dots i{width:6px;height:6px;border-radius:50%;border:1px solid rgba(20,20,30,.28);background:transparent;display:block;}
   .dots i.on{background:var(--graphite);border-color:var(--graphite);}
-  .ex-reps{font-size:12px;font-weight:500;color:rgba(20,20,30,.55);}
+  .ex-reps{font-size:11px;font-weight:500;color:rgba(20,20,30,.55);}
   /* inverted (white text on dark tiles: navy / dark-red) */
   .ex.inv{color:#fff;}
   .ex.inv .dots i{border-color:rgba(255,255,255,.5);}
