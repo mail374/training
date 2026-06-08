@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="de">
-<head> 
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#ffffff">
@@ -165,6 +165,13 @@
   .field input:focus{outline:none;}
   .field.full{grid-column:1/-1;}
   .field textarea{width:100%;border:0;background:transparent;padding:0;font-family:inherit;font-weight:400;font-size:15px;color:var(--graphite);resize:none;min-height:44px;line-height:1.45;}
+  .field.stepper{border-bottom:0;padding-bottom:0;}
+  .field.stepper label{margin-bottom:8px;}
+  .stp-row{display:flex;align-items:center;gap:6px;}
+  .stp-btn{flex:0 0 auto;width:30px;height:30px;border-radius:50%;border:1px solid var(--hairline);background:var(--white);color:var(--graphite);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;font-family:inherit;transition:transform .1s ease;}
+  .stp-btn:active{transform:scale(.9);}
+  .stp-btn svg{stroke:currentColor;display:block;}
+  .stp-val{flex:1;min-width:0;text-align:center;font-weight:500;font-size:22px;letter-spacing:-.02em;color:var(--graphite);line-height:1;}
   .field textarea:focus{outline:none;}
   .field textarea::placeholder{color:var(--ink-4);}
   .delta{font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin-top:14px;min-height:14px;color:var(--ink-3);}
@@ -245,7 +252,7 @@
         <span class="wm right">Training Log</span>
       </div>
       <div class="title-row">
-        <h1 id="splitTitle">Oberkörper Zug</h1>
+        <h1 id="splitTitle">Oberkörper Druck</h1>
       </div>
     </header>
 
@@ -293,9 +300,30 @@
     </div>
     <div class="last" id="mLast"><div class="ml">Zuletzt</div>noch keine Daten</div>
     <div class="fields">
-      <div class="field"><label>Sätze</label><input id="fSets" type="number" inputmode="numeric" min="0" placeholder="–"></div>
-      <div class="field"><label>Start kg</label><input id="fStart" type="number" inputmode="decimal" min="0" step="0.5" placeholder="–"></div>
-      <div class="field"><label>Heute kg</label><input id="fToday" type="number" inputmode="decimal" min="0" step="0.5" placeholder="–"></div>
+      <div class="field stepper" data-id="fSets" data-step="1">
+        <label>Sätze</label>
+        <div class="stp-row">
+          <button class="stp-btn" data-step-act="dec" aria-label="weniger" type="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+          <span class="stp-val" id="fSets">–</span>
+          <button class="stp-btn" data-step-act="inc" aria-label="mehr" type="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><line x1="12" y1="5" x2="12" y2="19"/></svg></button>
+        </div>
+      </div>
+      <div class="field stepper" data-id="fStart" data-step="5">
+        <label>Start kg</label>
+        <div class="stp-row">
+          <button class="stp-btn" data-step-act="dec" aria-label="weniger" type="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+          <span class="stp-val" id="fStart">–</span>
+          <button class="stp-btn" data-step-act="inc" aria-label="mehr" type="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><line x1="12" y1="5" x2="12" y2="19"/></svg></button>
+        </div>
+      </div>
+      <div class="field stepper" data-id="fToday" data-step="5">
+        <label>Heute kg</label>
+        <div class="stp-row">
+          <button class="stp-btn" data-step-act="dec" aria-label="weniger" type="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+          <span class="stp-val" id="fToday">–</span>
+          <button class="stp-btn" data-step-act="inc" aria-label="mehr" type="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><line x1="12" y1="5" x2="12" y2="19"/></svg></button>
+        </div>
+      </div>
     </div>
     <div class="delta" id="mDelta"></div>
     <div class="field full" style="margin-top:18px;">
@@ -347,37 +375,29 @@
 
 /* ---------------- Data model ---------------- */
 const WORKOUTS = {
-  "Oberkörper Zug": { accent:"--mist", items:[
-    { n:"KH-Bankdrücken", sets:3, reps:"8–12" },
-    { n:"Latzug",          sets:3, reps:"8–12" },
-    { n:"Face-Pulls",      sets:3, reps:"10–15" },
-    { n:"Kabel-Rudern",    sets:3, reps:"8–12" },
-    { n:"Trizepsdrücken",  sets:2, reps:"10–15" },
-    { n:"Schrägbank-Curls",sets:2, reps:"10–15" },
+  "Oberkörper Druck": { accent:"--mist", items:[
+    { n:"Aufwärmen Laufen",      sets:1, reps:"15 min" },
+    { n:"Brustpresse",           sets:4, reps:"6–10" },
+    { n:"Schulterpresse",        sets:4, reps:"8–10" },
+    { n:"Butterfly mit Pads",    sets:3, reps:"10–15" },
+    { n:"Brustpresse (Schräg)",  sets:3, reps:"10–12" },
+    { n:"Plank",                 sets:3, reps:"1 min" },
   ]},
-  "Unterkörper Beinbeuger": { accent:"--navy", items:[
-    { n:"Beinpresse",      sets:3, reps:"8–12" },
-    { n:"Rum. Kreuzheben", sets:3, reps:"8–12" },
-    { n:"Beckenheben",     sets:3, reps:"10–15" },
-    { n:"Beinbeuger",      sets:3, reps:"10–15" },
-    { n:"Waden (Sitzend)", sets:3, reps:"10–15" },
-    { n:"Kabel-Crunches",  sets:3, reps:"10–15" },
+  "Unterkörper": { accent:"--navy", items:[
+    { n:"Aufwärmen Laufen",      sets:1, reps:"15 min" },
+    { n:"Beinstrecker",          sets:4, reps:"8–10" },
+    { n:"Beinbeuger",            sets:4, reps:"8–10" },
+    { n:"Beinbeuger (Pause)",    sets:3, reps:"12–15" },
+    { n:"Rückenstrecker Stuhl",  sets:3, reps:"12–15" },
+    { n:"Plank",                 sets:3, reps:"1 min" },
   ]},
-  "Oberkörper Druck": { accent:"--sig-green", items:[
-    { n:"Brustpresse",     sets:3, reps:"8–12" },
-    { n:"Brust-Rudern",    sets:3, reps:"8–12" },
-    { n:"Schrägbank",      sets:3, reps:"8–12" },
-    { n:"Seitheben",       sets:3, reps:"10–15" },
-    { n:"Hammer-Curls",    sets:2, reps:"10–15" },
-    { n:"Trizeps ü. Kopf", sets:2, reps:"10–15" },
-  ]},
-  "Unterkörper Quadrizeps": { accent:"--sig-orange", items:[
-    { n:"Beinpresse",      sets:3, reps:"8–12" },
-    { n:"Ausfallschritte", sets:3, reps:"10–15" },
-    { n:"Beinbeuger",      sets:3, reps:"10–15" },
-    { n:"Rückenstrecker",  sets:3, reps:"10–15" },
-    { n:"Waden (Stehend)", sets:3, reps:"10–15" },
-    { n:"Beinheben",       sets:3, reps:"10–15" },
+  "Oberkörper Zug": { accent:"--sig-green", items:[
+    { n:"Aufwärmen Laufen",          sets:1, reps:"15 min" },
+    { n:"Latzug (Obergriff breit)",  sets:4, reps:"6–10" },
+    { n:"Rudermaschine (breit)",     sets:4, reps:"8–10" },
+    { n:"Latzug (Untergriff eng)",   sets:3, reps:"10–12" },
+    { n:"Rudermaschine (eng)",       sets:3, reps:"10–12" },
+    { n:"Plank",                     sets:3, reps:"1 min" },
   ]},
 };
 const SPLIT_NAMES = Object.keys(WORKOUTS);
@@ -494,6 +514,27 @@ function updateProgress(){
   p.innerHTML=`<b>${done}</b> / ${items.length} erledigt`;
 }
 
+/* ---------------- Stepper helpers ---------------- */
+function stpGet(id){
+  const t=el(id).textContent.trim();
+  if(t===''||t==='–') return '';
+  const v=parseFloat(t);
+  return isNaN(v) ? '' : v;
+}
+function stpSet(id, v){
+  el(id).textContent = (v===''||v==null) ? '–' : String(v);
+}
+function stepperClick(e){
+  const btn=e.target.closest('.stp-btn'); if(!btn) return;
+  const field=btn.closest('.field.stepper'); if(!field) return;
+  const id=field.dataset.id; const step=parseFloat(field.dataset.step)||1;
+  let v=stpGet(id);
+  if(v==='') v=0;
+  v = btn.dataset.stepAct==='inc' ? v+step : Math.max(0, v-step);
+  stpSet(id, v);
+  if(id==='fStart' || id==='fToday') computeDelta();
+}
+
 /* ---------------- Exercise modal ---------------- */
 function openExercise(ex,i){
   activeExercise=ex;
@@ -505,9 +546,9 @@ function openExercise(ex,i){
   el("mName").textContent=ex.n;
   el("mTarget").textContent=`${ex.sets} Sätze · ${ex.reps} Wdh`;
   el("mVideo").href="https://www.youtube.com/results?search_query="+encodeURIComponent(ex.n+" Übung richtige Ausführung");
-  el("fSets").value = d.sets ?? "";
-  el("fStart").value = d.start ?? "";
-  el("fToday").value = d.today ?? "";
+  stpSet("fSets", d.sets ?? "");
+  stpSet("fStart", d.start ?? "");
+  stpSet("fToday", d.today ?? "");
   el("fNotes").value = d.notes ?? "";
 
   const last=lastSessionFor(currentSplit, ex.n);
@@ -517,7 +558,7 @@ function openExercise(ex,i){
     const r=last.rec;
     lastBox.innerHTML=`<div class="ml">Zuletzt</div><span class="recap">${r.today||"–"} kg</span> · ${r.sets||"–"} Sätze`+
       (r.notes?` · <span style="color:var(--ink-3)">${escapeHtml(r.notes)}</span>`:"");
-    if((el("fStart").value===""||el("fStart").value==null) && r.today!=null) el("fStart").value = r.today;
+    if(stpGet("fStart")==="" && r.today!=null && r.today!=="") stpSet("fStart", r.today);
   } else {
     lastBox.classList.add("empty");
     lastBox.innerHTML=`<div class="ml">Zuletzt</div>noch keine Daten`;
@@ -526,7 +567,8 @@ function openExercise(ex,i){
   openSheet();
 }
 function computeDelta(){
-  const start=parseFloat(el("fStart").value), today=parseFloat(el("fToday").value);
+  const sV=stpGet("fStart"), tV=stpGet("fToday");
+  const start=sV===""?NaN:Number(sV), today=tV===""?NaN:Number(tV);
   const box=el("mDelta"); box.className="delta";
   if(!isNaN(start)&&!isNaN(today)&&start>0){
     const diff=+(today-start).toFixed(1);
@@ -557,7 +599,7 @@ function closeSplitSheet(){ el("splitScrim").classList.remove("open"); el("split
 function saveExercise(){
   if(!activeExercise) return;
   const k=keyFor(currentSplit, activeExercise.n);
-  liveData[k]={ sets:el("fSets").value, start:el("fStart").value, today:el("fToday").value, notes:el("fNotes").value.trim() };
+  liveData[k]={ sets:stpGet("fSets"), start:stpGet("fStart"), today:stpGet("fToday"), notes:el("fNotes").value.trim() };
   saveJSON(DATA_KEY, liveData);
   renderGrid();
   closeSheet();
@@ -565,7 +607,7 @@ function saveExercise(){
 }
 function clearExercise(){
   if(!activeExercise) return;
-  el("fSets").value=el("fStart").value=el("fToday").value=el("fNotes").value="";
+  stpSet("fSets",""); stpSet("fStart",""); stpSet("fToday",""); el("fNotes").value="";
   computeDelta();
 }
 
@@ -721,8 +763,7 @@ el("mClose").onclick=closeSheet;
 el("scrim").onclick=closeSheet;
 el("mSave").onclick=saveExercise;
 el("mClear").onclick=clearExercise;
-el("fStart").addEventListener("input",computeDelta);
-el("fToday").addEventListener("input",computeDelta);
+el("sheet").addEventListener("click", stepperClick);
 el("finishBtn").onclick=finishWorkout;
 el("historyBtn").onclick=()=>{ setTab("hist"); openPanel(); };
 el("statsBtn").onclick=()=>{ setTab("stats"); openPanel(); };
