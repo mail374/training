@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#ffffff">
-<title>Senning Studio® — Training Log</title>
+<title>Training Log</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -14,16 +14,18 @@
     --graphite:#252525; --navy:#041423; --slate:#afd7f2; --cloud:#e7f3fb; --mist:#e23317;
     --ink-2:#1a1a1a; --ink-3:#6e6e6e; --ink-4:#a8a8a8;
     --sig-red:#690311; --sig-green:#1e3a2e; --sig-yellow:#fdf3b5; --sig-orange:#c8a64b;
-    --r-tile:14px; --r-sm:3px; --r-md:8px; --r-pill:999px;
+    --r-tile:20px; --r-sm:3px; --r-md:12px; --r-pill:999px;
     --font-sans:"Inter","Helvetica Neue",Helvetica,Arial,sans-serif;
     --accent:var(--mist);
+    --spring:cubic-bezier(.34,1.56,.64,1);
+    --ease-out:cubic-bezier(.22,.9,.3,1);
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
   html,body{margin:0;padding:0;}
   body{
     font-family:var(--font-sans); background:var(--paper); color:var(--graphite);
     min-height:100vh; -webkit-font-smoothing:antialiased; padding-bottom:118px;
-    font-variant-numeric:normal;
+    font-variant-numeric:normal; overflow-x:hidden;
   }
   .num{font-variant-numeric:normal;}
   .wrap{max-width:520px;margin:0 auto;padding:24px 20px 0;display:flex;flex-direction:column;
@@ -34,231 +36,370 @@
 
   /* ---------- Header ---------- */
   .brand{display:flex;align-items:center;gap:9px;}
-  .brand .right{margin-left:auto;}
-  .brand .mark{
-    width:22px;height:22px;border:1px solid var(--graphite);border-radius:50%;
-    display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;
-  }
   .brand .wm{font-size:12px;font-weight:400;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-4);}
-  .title-row{display:flex;align-items:flex-end;justify-content:space-between;margin-top:18px;}
-  h1{font-size:44px;font-weight:400;letter-spacing:-.035em;line-height:.92;margin:0;}
-  .date{font-size:12px;font-weight:400;color:var(--ink-4);letter-spacing:.06em;text-align:right;}
+  .brand .streak{margin-left:auto;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);
+    display:flex;align-items:center;gap:6px;}
+  .brand .streak .flame{color:var(--mist);}
+  .title-row{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:16px;}
+  h1{font-size:44px;font-weight:400;letter-spacing:-.035em;line-height:.95;margin:0;
+    transition:opacity .18s var(--ease-out), transform .18s var(--ease-out);}
+  h1.switching{opacity:0;transform:translateX(-14px);}
+  /* Großer, zentraler Fortschritt: konzentrische Ringe – einer pro Übung (wie am Anfang) */
+  .progress-hero{flex:1 1 auto;display:flex;align-items:center;justify-content:center;padding:12px 0;min-height:190px;}
+  .big-ring{position:relative;height:100%;min-height:178px;max-height:440px;aspect-ratio:1/1;max-width:100%;}
+  .big-ring svg{width:100%;height:100%;display:block;overflow:visible;transform-origin:center;}
+  .big-ring svg.fresh{animation:ringsIn .6s var(--spring);}
+  @keyframes ringsIn{from{transform:rotate(-50deg) scale(.85);opacity:0;}to{transform:rotate(0) scale(1);opacity:1;}}
+  .big-ring circle.bg{stroke:#e6e6ea;}
+  .big-ring circle.fg{stroke:var(--mist);transition:stroke-dashoffset .9s var(--ease-out);}
+  .big-ring.celebrate{animation:ringCeleb .7s var(--spring);}
+  @keyframes ringCeleb{0%{transform:scale(1);}40%{transform:scale(1.07);}100%{transform:scale(1);}}
 
-  .select-bar{
-    margin-top:20px;display:flex;align-items:center;gap:12px;
-    background:var(--white);color:var(--graphite);border:1px solid var(--hairline);
-    border-radius:var(--r-pill);padding:16px 22px;
-    cursor:pointer;user-select:none;position:relative;
-  }
-  .select-bar .val{font-size:17px;font-weight:500;letter-spacing:-.01em;}
-  .select-bar .caret{margin-left:auto;transition:transform .2s;display:flex;color:var(--ink-3);}
-  .select-bar.open .caret{transform:rotate(180deg);}
-  .select-bar svg{stroke:currentColor;}
+  /* ---------- Stage (swipe container) ---------- */
+  .stage{display:flex;flex-direction:column;flex:1 1 auto;transition:transform .22s var(--ease-out),opacity .22s var(--ease-out);}
+  .stage.out-left{transform:translateX(-28px);opacity:0;}
+  .stage.out-right{transform:translateX(28px);opacity:0;}
+  .stage.in-left{animation:inLeft .26s var(--ease-out);}
+  .stage.in-right{animation:inRight .26s var(--ease-out);}
+  @keyframes inLeft{from{transform:translateX(28px);opacity:0;}to{transform:translateX(0);opacity:1;}}
+  @keyframes inRight{from{transform:translateX(-28px);opacity:0;}to{transform:translateX(0);opacity:1;}}
 
-  .menu{
-    position:absolute;left:0;right:0;top:calc(100% + 6px);background:var(--white);
-    border:1px solid var(--hairline);border-radius:var(--r-tile);padding:6px;z-index:40;display:none;
-    box-shadow:0 16px 40px rgba(20,20,30,.12);
-  }
-  .menu.open{display:block;}
-  .menu .opt{
-    padding:12px 12px;border-radius:var(--r-md);color:var(--graphite);font-weight:500;font-size:14px;
-    display:flex;align-items:center;gap:10px;cursor:pointer;letter-spacing:-.01em;
-  }
-  .menu .opt:hover{background:var(--tile-2);}
-  .menu .opt.active{background:var(--tile-2);}
-  .menu .opt .dot{width:9px;height:9px;border-radius:50%;flex:none;}
-  .menu .opt.active .tick{margin-left:auto;color:var(--ink-3);font-size:11px;}
-  .menu .sep{height:1px;background:var(--hairline);margin:6px 8px;}
-  .menu .opt.ghost{color:var(--ink-3);font-size:13px;}
-  .menu .opt.ghost svg{stroke:var(--ink-3);}
-
-  /* ---------- Grid head ---------- */
-  .grid-head{display:flex;align-items:baseline;justify-content:space-between;margin-top:26px;padding:0 2px 12px;border-bottom:1px solid var(--hairline);}
-  .grid-head .l{font-size:11px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--graphite);}
-  #progressPill{font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);}
-  #progressPill b{color:var(--graphite);font-weight:600;}
-
-  /* ---------- Exercise grid ---------- */
-  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px;}
+  /* ---------- Exercise grid ----------
+     2 Spalten statt 3: mehr Raum für Namen, größere Touch-Flächen.
+     Zeit-Übungen (Aufwärmen/Plank) als schmale volle Reihen → klare Hierarchie. */
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:auto;padding-bottom:6px;}
   .ex{
-    background:var(--slate);border:0;border-radius:14px;color:var(--graphite);
-    padding:13px;min-height:104px;display:flex;flex-direction:column;justify-content:space-between;
-    cursor:pointer;transition:transform .12s ease;
+    background:var(--navy);border:0;border-radius:22px;color:#fff;
+    padding:16px;min-height:122px;display:flex;flex-direction:column;
+    cursor:pointer;position:relative;overflow:hidden;
+    box-shadow:0 10px 22px rgba(4,20,35,.12);
+    transition:transform .14s var(--ease-out), background-color .45s var(--ease-out), box-shadow .3s;
   }
-  .ex:active{transform:scale(.96);}
-  .ex-top{display:flex;align-items:flex-start;justify-content:space-between;gap:6px;}
-  .ex-name{font-size:14px;font-weight:600;letter-spacing:-.02em;line-height:1.1;color:inherit;}
-  .ex-top .chk{flex:none;width:18px;height:18px;border-radius:50%;background:var(--graphite);color:#fff;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;}
-  .ex-bottom{display:flex;align-items:flex-end;justify-content:space-between;margin-top:8px;}
-  .dots{display:flex;gap:4px;}
-  .dots i{width:6px;height:6px;border-radius:50%;border:1px solid rgba(20,20,30,.28);background:transparent;display:block;}
-  .dots i.on{background:var(--graphite);border-color:var(--graphite);}
-  .ex-reps,.ex-sets{font-size:11px;font-weight:500;color:rgba(20,20,30,.55);}
-  /* inverted (white text on dark tiles: navy / dark-red) */
-  .ex.inv{color:#fff;}
-  .ex.inv .dots i{border-color:rgba(255,255,255,.5);}
-  .ex.inv .dots i.on{background:#fff;border-color:#fff;}
-  .ex.inv .ex-top .chk{background:#fff;color:var(--graphite);}
-  .ex.inv .ex-reps,.ex.inv .ex-sets{color:rgba(255,255,255,.72);}
-
-  /* ---------- Ring progress ---------- */
-  .rings{background:transparent;padding:14px 2px;margin:0;flex:1 1 auto;display:flex;align-items:center;justify-content:center;min-height:200px;}
-  .rings .chart{position:relative;width:224px;height:224px;}
-  .rings .chart svg{width:100%;height:100%;display:block;overflow:visible;}
-  @media(max-width:420px){ .rings .chart{width:200px;height:200px;} }
+  .ex.wide{grid-column:1/-1;flex-direction:row;align-items:center;gap:12px;min-height:0;padding:13px 16px;border-radius:22px;}
+  .ex.wide .ex-bottom{margin-top:0;gap:12px;}
+  /* dynamische Lichtkante oben + schräger Akzent unten rechts */
+  .ex::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+    background:linear-gradient(160deg,rgba(255,255,255,.10) 0%,transparent 38%);}
+  .ex:active{transform:scale(.95);}
+  .ex.enter{animation:tileIn .5s var(--spring) backwards;}
+  @keyframes tileIn{from{opacity:0;transform:translateY(16px) scale(.92);}to{opacity:1;transform:translateY(0) scale(1);}}
+  .ex.done{background:var(--mist);}
+  .ex.just-done{animation:tilePop .5s var(--spring);}
+  @keyframes tilePop{0%{transform:scale(1);}35%{transform:scale(1.06);}70%{transform:scale(.97);}100%{transform:scale(1);}}
+  .ex .shine{position:absolute;inset:0;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.22) 50%,transparent 70%);
+    transform:translateX(-120%);pointer-events:none;}
+  .ex.just-done .shine{animation:shine .7s var(--ease-out) .1s;}
+  @keyframes shine{to{transform:translateX(120%);}}
+  .ex-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;}
+  .ex.wide .ex-top{flex:1;align-items:center;}
+  .ex-name{font-size:15px;font-weight:600;letter-spacing:-.02em;line-height:1.18;color:inherit;}
+  .ex-top .chk{flex:none;width:26px;height:26px;border-radius:50%;background:#fff;color:var(--navy);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;
+    animation:chkPop .4s var(--spring);}
+  .ex-top .chk.ghost{background:rgba(255,255,255,.14);color:rgba(255,255,255,.85);font-size:14px;font-weight:500;animation:none;}
+  .ex .go{flex:none;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.14);color:#fff;
+    display:flex;align-items:center;justify-content:center;}
+  .ex .go svg{stroke:currentColor;}
+  .ex .go.solid{background:#fff;color:var(--navy);animation:chkPop .4s var(--spring);font-size:13px;font-weight:700;}
+  @keyframes chkPop{from{transform:scale(0) rotate(-90deg);}to{transform:scale(1) rotate(0);}}
+  .ex-meta{font-size:11px;font-weight:500;color:rgba(255,255,255,.55);margin-top:auto;padding-top:10px;min-height:14px;}
+  .ex.wide .ex-meta{margin-top:3px;padding-top:0;}
+  .ex-bottom{display:flex;align-items:center;justify-content:space-between;margin-top:7px;}
+  .ex-reps{font-size:11px;font-weight:500;color:rgba(255,255,255,.72);}
+  .dots{display:flex;gap:5px;}
+  .dots{gap:4px;}
+  .dots i{width:11px;height:6px;border-radius:3px;border:0;background:rgba(255,255,255,.22);display:block;transition:background .3s;}
+  .dots i.on{background:#fff;}
+  .ex .holdring{position:absolute;inset:0;border-radius:inherit;pointer-events:none;border:0 solid rgba(255,255,255,.85);opacity:0;}
+  .ex.holding .holdring{opacity:1;animation:holdGrow .55s linear forwards;}
+  @keyframes holdGrow{from{border-width:0;}to{border-width:4px;}}
 
   /* ---------- Bottom bar ---------- */
   .bottom{position:fixed;left:0;right:0;bottom:0;padding:14px 20px calc(20px + env(safe-area-inset-bottom));
-    background:linear-gradient(to top,var(--white) 70%,rgba(255,255,255,0));}
+    background:linear-gradient(to top,var(--white) 70%,rgba(255,255,255,0));z-index:30;}
   .tabbar{max-width:520px;margin:0 auto;display:flex;align-items:center;justify-content:space-around;gap:4px;}
   .tabbtn{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;background:none;border:0;cursor:pointer;
     font-family:inherit;color:var(--ink-3);padding:0;}
-  .tabbtn .ic{position:relative;width:26px;height:26px;display:flex;align-items:center;justify-content:center;color:var(--ink-3);transition:transform .12s ease;}
+  .tabbtn .ic{position:relative;width:26px;height:26px;display:flex;align-items:center;justify-content:center;color:var(--ink-3);transition:transform .15s var(--spring);}
   .tabbtn .ic svg{stroke:currentColor;width:24px;height:24px;}
   .tabbtn .lb{font-size:11px;font-weight:500;letter-spacing:.01em;color:var(--ink-3);}
-  .tabbtn:active .ic{transform:scale(.9);}
+  .tabbtn:active .ic{transform:scale(.85);}
   .tabbtn .dot-badge{position:absolute;top:-2px;right:-4px;width:9px;height:9px;border-radius:50%;background:var(--mist);border:1.5px solid var(--white);}
-  /* center circle (Split) */
   .tabbtn.split-btn{flex:0 0 auto;justify-content:center;}
-  .tabbtn.split-btn .ic{width:58px;height:58px;border-radius:50%;background:var(--mist);color:#fff;margin:-6px 10px 0;}
+  .tabbtn.split-btn .ic{width:58px;height:58px;border-radius:50%;background:var(--mist);color:#fff;margin:-6px 10px 0;
+    box-shadow:0 6px 18px rgba(226,51,23,.32);transition:transform .15s var(--spring),box-shadow .2s;}
+  .tabbtn.split-btn:active .ic{transform:scale(.9);box-shadow:0 2px 8px rgba(226,51,23,.25);}
   .tabbtn.split-btn .ic svg{width:26px;height:26px;}
   .tabbtn.split-btn .lb{display:none;}
-  /* shared button (modal save) */
   .btn{border:1px solid var(--hairline);border-radius:var(--r-pill);font-family:inherit;font-weight:500;font-size:15px;
-    padding:16px;cursor:pointer;letter-spacing:-.01em;flex:1;transition:transform .1s,opacity .2s;background:var(--white);color:var(--graphite);}
-  .btn:active{transform:scale(.985);}
-  .btn-primary{background:var(--graphite);color:var(--white);border-color:var(--graphite);}
+    padding:16px;cursor:pointer;letter-spacing:-.01em;flex:1;transition:transform .12s var(--spring),opacity .2s;background:var(--white);color:var(--graphite);
+    display:flex;align-items:center;justify-content:center;gap:10px;}
+  .btn .bic{width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:12px;flex:none;}
+  .btn:active{transform:scale(.97);}
+  .btn-primary{background:var(--graphite);color:var(--white);border-color:var(--graphite);
+    font-weight:600;letter-spacing:-.01em;font-size:15px;}
+
+  /* ---------- Rest timer chip ---------- */
+  .rest{position:fixed;left:50%;bottom:128px;transform:translate(-50%,80px);z-index:45;
+    background:var(--navy);color:#fff;border-radius:var(--r-pill);padding:10px 16px 10px 12px;
+    display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none;
+    box-shadow:0 12px 30px rgba(4,20,35,.3);opacity:0;pointer-events:none;
+    transition:transform .35s var(--spring),opacity .3s;}
+  .rest.show{transform:translate(-50%,0);opacity:1;pointer-events:auto;}
+  .rest .rl{font-size:9px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.55);}
+  .rest .rt{font-size:20px;font-weight:600;letter-spacing:-.02em;line-height:1;font-variant-numeric:tabular-nums;}
+  .rest svg.ringt{transform:rotate(-90deg);}
+  .rest svg.ringt circle.bg{stroke:rgba(255,255,255,.18);}
+  .rest svg.ringt circle.fg{stroke:var(--mist);transition:stroke-dashoffset 1s linear;}
+  .rest .x{font-size:11px;color:rgba(255,255,255,.5);margin-left:2px;}
+  .rest.alarm{animation:restAlarm .4s ease 3;}
+  @keyframes restAlarm{0%,100%{transform:translate(-50%,0);}25%{transform:translate(calc(-50% - 5px),0);}75%{transform:translate(calc(-50% + 5px),0);}}
 
   /* ---------- Modal ---------- */
-  .scrim{position:fixed;inset:0;background:rgba(15,15,25,.34);z-index:50;display:none;}
-  .scrim.open{display:block;}
+  .scrim{position:fixed;inset:0;background:rgba(15,15,25,.34);z-index:50;opacity:0;pointer-events:none;transition:opacity .25s;}
+  .scrim.open{opacity:1;pointer-events:auto;}
   .sheet{position:fixed;left:0;right:0;bottom:0;z-index:60;background:var(--white);
-    border-radius:14px 14px 0 0;border-top:1px solid var(--hairline);
-    padding:20px 22px calc(26px + env(safe-area-inset-bottom));
-    transform:translateY(100%);transition:transform .28s cubic-bezier(.2,.8,.2,1);
-    max-width:520px;margin:0 auto;max-height:92vh;overflow:auto;}
+    border-radius:28px 28px 0 0;border-top:1px solid var(--hairline);
+    padding:14px 22px calc(26px + env(safe-area-inset-bottom));
+    transform:translateY(100%);transition:transform .38s var(--spring);
+    max-width:520px;margin:0 auto;max-height:92vh;overflow:auto;touch-action:pan-y;}
   .sheet.open{transform:translateY(0);}
-  .sheet .grip{width:40px;height:4px;border-radius:2px;background:var(--hairline);margin:0 auto 18px;}
+  .sheet.dragging{transition:none;}
+  .sheet .grip{width:46px;height:5px;border-radius:3px;background:var(--hairline);margin:4px auto 18px;}
   .sheet-head{display:flex;align-items:center;gap:14px;}
   .sheet-head .ic{width:46px;height:46px;border-radius:var(--r-md);background:var(--cloud);color:var(--graphite);
-    display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600;letter-spacing:.04em;flex:none;font-variant-numeric:normal;}
-  .sheet-head h2{font-size:24px;font-weight:500;letter-spacing:-.03em;margin:0;line-height:1;}
+    display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600;letter-spacing:.04em;flex:none;transition:background .4s;}
+  .sheet-head h2{font-size:24px;font-weight:500;letter-spacing:-.03em;margin:0;line-height:1.05;}
   .sheet-head .target{font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);margin-top:6px;}
   .sheet-head .close{margin-left:auto;width:34px;height:34px;border-radius:50%;background:var(--white);border:1px solid var(--hairline);font-size:13px;cursor:pointer;color:var(--graphite);display:flex;align-items:center;justify-content:center;align-self:flex-start;}
   .vid-btn{flex:0 0 56px;align-self:stretch;display:flex;align-items:center;justify-content:center;
-    border-radius:var(--r-pill);background:var(--mist);color:#fff;text-decoration:none;cursor:pointer;transition:transform .1s,opacity .2s;}
+    border-radius:var(--r-pill);background:var(--mist);color:#fff;text-decoration:none;cursor:pointer;transition:transform .12s var(--spring),opacity .2s;}
   .vid-btn svg{display:block;}
-  .vid-btn:active{transform:scale(.97);opacity:.9;}
+  .vid-btn:active{transform:scale(.94);opacity:.9;}
 
   .last{margin:18px 0;background:var(--white);border:1px solid var(--hairline);border-radius:var(--r-tile);padding:12px 14px;
-    font-size:13px;font-weight:400;color:var(--ink-2);}
+    font-size:13px;font-weight:400;color:var(--ink-2);display:flex;align-items:center;justify-content:space-between;gap:10px;}
   .last .ml{font-size:10px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);margin-bottom:5px;}
   .last .recap{font-weight:600;}
-  .last.empty{color:var(--ink-3);font-size:13px;}
+  .last.empty{color:var(--ink-3);font-size:13px;display:block;}
+  .last .use{flex:none;border:0;background:var(--navy);color:#fff !important;border-radius:var(--r-pill);
+    font-family:inherit;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--graphite);
+    padding:8px 12px;cursor:pointer;transition:transform .12s var(--spring);}
+  .last .use:active{transform:scale(.93);}
 
-  .fields{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
+  .fields{display:grid;grid-template-columns:1fr;gap:14px;}
   .field{border-bottom:1px solid var(--hairline);padding-bottom:8px;transition:border-color .15s;}
   .field:focus-within{border-bottom-color:var(--graphite);}
   .field label{display:block;font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin-bottom:8px;}
-  .field input{width:100%;border:0;background:transparent;padding:0;font-family:inherit;font-weight:500;font-size:26px;letter-spacing:-.02em;color:var(--graphite);font-variant-numeric:normal;}
-  .field input:focus{outline:none;}
   .field.full{grid-column:1/-1;}
   .field textarea{width:100%;border:0;background:transparent;padding:0;font-family:inherit;font-weight:400;font-size:15px;color:var(--graphite);resize:none;min-height:44px;line-height:1.45;}
-  .field.stepper{border-bottom:0;padding-bottom:0;}
-  .field.stepper label{margin-bottom:8px;}
-  .stp-row{display:flex;align-items:center;gap:6px;}
-  .stp-btn{flex:0 0 auto;width:30px;height:30px;border-radius:50%;border:1px solid var(--hairline);background:var(--white);color:var(--graphite);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;font-family:inherit;transition:transform .1s ease;}
-  .stp-btn:active{transform:scale(.9);}
-  .stp-btn svg{stroke:currentColor;display:block;}
-  .stp-val{flex:1;min-width:0;text-align:center;font-weight:500;font-size:22px;letter-spacing:-.02em;color:var(--graphite);line-height:1;}
   .field textarea:focus{outline:none;}
   .field textarea::placeholder{color:var(--ink-4);}
-  .delta{font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin-top:14px;min-height:14px;color:var(--ink-3);}
+  .field.stepper{border-bottom:0;padding-bottom:0;}
+  .field.stepper label{margin-bottom:10px;display:flex;justify-content:space-between;align-items:baseline;}
+  .field.stepper label .drag-hint{font-size:9px;letter-spacing:.08em;color:var(--ink-4);text-transform:uppercase;}
+  /* Sätze als Chips – ein Tap statt mehrfach + drücken */
+  .chip-row{display:flex;gap:8px;}
+  .chip{flex:1;padding:13px 0;border:1px solid var(--hairline);border-radius:var(--r-pill);background:var(--white);
+    font-family:inherit;font-weight:600;font-size:16px;color:var(--graphite);cursor:pointer;
+    transition:transform .15s var(--spring),background .2s,color .2s,border-color .2s;}
+  .chip:active{transform:scale(.92);}
+  .chip.on{background:var(--navy);border-color:var(--navy);color:#fff;transform:scale(1.05);}
+  .stp-row{display:flex;align-items:center;gap:14px;}
+  .stp-btn{flex:0 0 auto;width:54px;height:54px;border-radius:50%;border:0;background:var(--tile-2);color:var(--graphite);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;font-family:inherit;transition:transform .12s var(--spring),background .15s;touch-action:manipulation;user-select:none;}
+  .stp-btn:active{transform:scale(.86);background:var(--hairline);}
+  .stp-btn svg{stroke:currentColor;display:block;width:20px;height:20px;pointer-events:none;}
+  .stp-val{flex:1;min-width:0;text-align:center;font-weight:500;font-size:44px;letter-spacing:-.03em;color:var(--graphite);line-height:1;
+    cursor:ew-resize;touch-action:pan-y;user-select:none;border-radius:var(--r-md);padding:8px 0;transition:background .2s;}
+  /* Start kg deutlich zurückgenommen – sekundäre Info */
+  .field.stepper.compact{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+  .field.stepper.compact label{margin:0;flex:1;}
+  .field.stepper.compact .stp-row{flex:0 0 auto;gap:8px;}
+  .field.stepper.compact .stp-btn{width:38px;height:38px;}
+  .field.stepper.compact .stp-btn svg{width:14px;height:14px;}
+  .field.stepper.compact .stp-val{flex:0 0 auto;min-width:64px;font-size:20px;padding:6px 4px;}
+  /* Ziehbare Skala (Lineal) unter dem Hero-Stepper – wie der KG-Slider der Referenz */
+  .ruler{margin-top:14px;height:44px;border-radius:14px;background-color:var(--tile-2);position:relative;overflow:hidden;
+    cursor:ew-resize;touch-action:pan-y;user-select:none;
+    background-image:repeating-linear-gradient(90deg,#c4c4cc 0 2px,transparent 2px 12px),
+                     repeating-linear-gradient(90deg,#9a9aa6 0 2px,transparent 2px 60px);
+    background-size:auto 14px, auto 24px;background-repeat:repeat-x;
+    background-position:50% 100%, 50% 100%;}
+  .ruler::after{content:"";position:absolute;left:50%;top:6px;bottom:6px;width:3px;border-radius:2px;background:var(--mist);transform:translateX(-50%);}
+  .ruler::before{content:"";position:absolute;left:50%;top:0;width:0;height:0;transform:translateX(-50%);
+    border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid var(--mist);}
+  .stp-val.scrubbing{background:var(--cloud);}
+  .stp-val.bump-up{animation:bumpUp .25s var(--spring);}
+  .stp-val.bump-down{animation:bumpDown .25s var(--spring);}
+  @keyframes bumpUp{30%{transform:translateY(-6px) scale(1.08);}100%{transform:none;}}
+  @keyframes bumpDown{30%{transform:translateY(6px) scale(.94);}100%{transform:none;}}
+  .delta{font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin-top:14px;min-height:14px;color:var(--ink-3);transition:color .3s;}
   .delta.up{color:var(--sig-green);}.delta.down{color:var(--mist);}
+  .delta.flash{animation:deltaFlash .4s var(--spring);}
+  @keyframes deltaFlash{30%{transform:translateX(4px);}100%{transform:none;}}
+
+  /* ---------- Plank-Timer: analoge Uhr ---------- */
+  .timer-block{margin:16px 0 4px;display:flex;flex-direction:column;align-items:center;gap:16px;}
+  .clock{position:relative;width:min(100%,420px);aspect-ratio:1/1;cursor:pointer;transition:transform .15s var(--spring);}
+  .clock:active{transform:scale(.98);}
+  .clock svg{width:100%;height:100%;display:block;overflow:visible;}
+  .clock .face{fill:var(--tile-2);}
+  .clock .tickm{stroke:#d4d4da;}
+  .clock .tickM{stroke:#b4b4be;}
+  .clock .arc{stroke:var(--mist);transition:stroke .4s;}
+  .clock .hand{stroke:var(--mist);transition:stroke .4s;}
+  .clock .pin{fill:var(--mist);transition:fill .4s;}
+  .clock .pie{fill:var(--slate);opacity:0;transition:opacity .35s;}
+  .clock .hand{transition:opacity .3s;}
+  .clock.is-rest .arc{stroke:var(--slate);}
+  .clock.is-rest .hand{stroke:rgba(4,20,35,.7);stroke-width:5.5;}
+  .clock.is-rest .pin{fill:rgba(4,20,35,.7);}
+  .clock.is-rest .face{fill:var(--slate);}
+  .clock.is-rest .tickm{stroke:rgba(4,20,35,.18);}
+  .clock.is-rest .tickM{stroke:rgba(4,20,35,.32);}
+  .clock.is-rest .t-phase{color:rgba(4,20,35,.65);}
+  .clock.is-rest .t-hint{color:rgba(4,20,35,.5);}
+  .clock.is-rest .t-time{color:#fff;font-size:96px;text-shadow:0 2px 14px rgba(4,20,35,.25);animation:countPulse 1s ease-in-out infinite;}
+  @keyframes countPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.15);}}
+  .clock-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;}
+  .t-phase{font-size:13px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);transition:color .4s;}
+  .t-time{font-size:62px;font-weight:500;letter-spacing:-.03em;line-height:1;margin-top:8px;font-variant-numeric:tabular-nums;}
+  .t-hint{font-size:12px;font-weight:500;color:var(--ink-4);margin-top:9px;letter-spacing:.04em;}
+  .t-controls{display:flex;gap:14px;}
+  .t-ctl{width:68px;height:68px;border-radius:50%;border:0;background:var(--tile-2);color:var(--graphite);
+    display:flex;align-items:center;justify-content:center;cursor:pointer;font-family:inherit;
+    transition:transform .14s var(--spring),background .2s,opacity .2s;}
+  .t-ctl:active{transform:scale(.86);}
+  .t-ctl svg{display:block;}
+  .t-ctl.play{background:var(--mist);color:#fff;box-shadow:0 8px 20px rgba(226,51,23,.3);}
+  .t-ctl[disabled]{opacity:.35;pointer-events:none;}
+  /* Pause-Overlay: deckt die Uhr komplett ab – garantiert sichtbar */
+  .pause-overlay{position:absolute;inset:0;border-radius:50%;background:var(--slate);z-index:5;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;}
+  .po-label{font-size:14px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:rgba(4,20,35,.6);}
+  .po-count{font-size:112px;font-weight:600;line-height:1;color:#fff;margin-top:8px;
+    text-shadow:0 3px 16px rgba(4,20,35,.28);animation:countPulse 1s ease-in-out infinite;font-variant-numeric:tabular-nums;}
+  .po-sub{font-size:12px;font-weight:500;color:rgba(4,20,35,.6);margin-top:10px;}
+  .t-rounds{display:flex;gap:8px;}
+  .t-rounds i{width:36px;height:7px;border-radius:4px;background:var(--tile-2);display:block;transition:background .4s;}
+  .t-rounds i.on{background:var(--mist);}
+  .t-rounds i.half{background:var(--slate);}
+  .t-result{display:flex;gap:10px;width:100%;animation:tileIn .4s var(--spring);}
+
+  .clock.alarm{animation:clockShake .4s ease 2;}
+  @keyframes clockShake{0%,100%{transform:translateX(0);}25%{transform:translateX(-7px);}75%{transform:translateX(7px);}}
 
   /* split picker popup */
   .split-list{display:flex;flex-direction:column;gap:8px;margin-top:16px;}
-  .split-row{display:flex;align-items:center;gap:12px;padding:16px 16px;border:1px solid var(--hairline);
-    border-radius:14px;cursor:pointer;font-weight:500;font-size:16px;letter-spacing:-.01em;color:var(--graphite);background:var(--white);transition:transform .1s ease;}
-  .split-row:active{transform:scale(.99);background:var(--tile-2);}
+  .split-row{display:flex;align-items:center;gap:12px;padding:16px 18px;border:1px solid var(--hairline);
+    border-radius:var(--r-pill);cursor:pointer;font-weight:500;font-size:16px;letter-spacing:-.01em;color:var(--graphite);background:var(--white);
+    transition:transform .12s var(--spring),background .15s;animation:tileIn .4s var(--spring) backwards;}
+  .split-row:nth-child(1){animation-delay:.03s}.split-row:nth-child(2){animation-delay:.08s}.split-row:nth-child(3){animation-delay:.13s}
+  .split-row:active{transform:scale(.98);background:var(--tile-2);}
   .split-row .dot{width:11px;height:11px;border-radius:50%;flex:none;}
   .split-row .nm{flex:1;}
   .split-row .tick{font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);}
-  .split-row.active{border-color:var(--graphite);border-width:2px;padding:15px 15px;}
+  .split-row.active{border-color:var(--graphite);border-width:2px;padding:15px 17px;}
 
   .sheet-actions{display:flex;gap:10px;margin-top:26px;}
   .sheet-actions .clear{flex:0 0 auto;background:var(--white);border:1px solid var(--hairline);border-radius:var(--r-pill);padding:0 20px;font-weight:500;cursor:pointer;font-family:inherit;color:var(--sig-red);font-size:14px;}
 
   /* ---------- Toast ---------- */
-  .toast{position:fixed;left:50%;transform:translate(-50%,16px);bottom:118px;z-index:90;
+  .toast{position:fixed;left:50%;transform:translate(-50%,16px) scale(.92);bottom:118px;z-index:90;
     background:var(--graphite);color:#fff;font-weight:500;font-size:13px;letter-spacing:-.01em;padding:12px 18px;border-radius:var(--r-pill);
-    opacity:0;pointer-events:none;transition:.25s;}
-  .toast.show{opacity:1;transform:translate(-50%,0);}
+    opacity:0;pointer-events:none;transition:transform .3s var(--spring),opacity .25s;display:flex;align-items:center;gap:8px;}
+  .toast.show{opacity:1;transform:translate(-50%,0) scale(1);}
+  .toast .tick{width:16px;height:16px;border-radius:50%;background:var(--mist);color:#fff;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex:none;}
+
+  /* ---------- Confetti ---------- */
+  .confetti{position:fixed;inset:0;pointer-events:none;z-index:95;overflow:hidden;}
+  .confetti i{position:absolute;top:-12px;width:8px;height:12px;border-radius:2px;opacity:.95;
+    animation:confFall var(--dur,1.6s) cubic-bezier(.3,.4,.6,1) var(--del,0s) forwards;}
+  @keyframes confFall{
+    0%{transform:translateY(0) rotate(0) translateX(0);opacity:1;}
+    100%{transform:translateY(105vh) rotate(var(--rot,540deg)) translateX(var(--dx,0px));opacity:.8;}
+  }
 
   /* ---------- Panel (history / stats) ---------- */
   .panel{position:fixed;inset:0;z-index:70;background:var(--paper);display:none;flex-direction:column;}
-  .panel.open{display:flex;}
+  .panel.open{display:flex;animation:panelIn .3s var(--ease-out);}
+  @keyframes panelIn{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:none;}}
   .panel-top{max-width:520px;margin:0 auto;width:100%;padding:26px 20px 0;}
   .panel-top .row{display:flex;align-items:flex-end;justify-content:space-between;}
   .panel-top h2{font-size:40px;font-weight:400;letter-spacing:-.035em;margin:0;line-height:.9;}
   .panel-top .x{width:38px;height:38px;border-radius:50%;border:1px solid var(--hairline);background:var(--white);color:var(--graphite);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
-  .tabs{display:flex;gap:4px;margin-top:20px;background:var(--tile-2);border-radius:var(--r-pill);padding:4px;}
-  .tab{flex:1;border:none;background:transparent;border-radius:var(--r-pill);padding:9px;font-family:inherit;font-weight:500;font-size:12px;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;color:var(--ink-3);}
-  .tab.active{background:var(--graphite);color:#fff;}
+  .tabs{display:flex;gap:4px;margin-top:20px;background:var(--tile-2);border-radius:var(--r-pill);padding:4px;position:relative;}
+  .tab{flex:1;border:none;background:transparent;border-radius:var(--r-pill);padding:9px;font-family:inherit;font-weight:500;font-size:12px;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;color:var(--ink-3);position:relative;z-index:2;transition:color .25s;}
+  .tab.active{color:#fff;}
+  .tabs .pill{position:absolute;top:4px;bottom:4px;width:calc(50% - 4px);left:4px;background:var(--graphite);border-radius:var(--r-pill);z-index:1;transition:transform .3s var(--spring);}
+  .tabs.s2 .pill{transform:translateX(100%);}
   .panel-body{flex:1;overflow:auto;max-width:520px;margin:0 auto;width:100%;padding:20px 20px 48px;}
 
-  .sess{background:var(--white);border:1px solid var(--hairline);border-radius:var(--r-tile);padding:16px;margin-bottom:12px;}
+  .sess{background:var(--white);border:1px solid var(--hairline);border-radius:var(--r-tile);padding:16px;margin-bottom:12px;animation:tileIn .4s var(--spring) backwards;}
   .sess .h{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
   .sess .h .when{font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);}
   .sess .h .what{font-size:18px;font-weight:500;letter-spacing:-.02em;margin-top:5px;display:flex;align-items:center;gap:8px;}
   .sess .h .what .dot{width:8px;height:8px;border-radius:50%;}
   .sess .h .tools{display:flex;gap:6px;}
-  .sess .h .tools button{width:30px;height:30px;border-radius:50%;border:1px solid var(--hairline);background:var(--white);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--graphite);}
+  .sess .h .tools button{width:30px;height:30px;border-radius:50%;border:1px solid var(--hairline);background:var(--white);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--graphite);transition:transform .12s var(--spring);}
+  .sess .h .tools button:active{transform:scale(.88);}
   .sess .h .tools .del{color:var(--sig-red);}
   .sess .h .tools svg{stroke:currentColor;}
+  .sess.removing{transition:transform .3s,opacity .3s,max-height .35s,margin .35s,padding .35s;transform:translateX(40px);opacity:0;max-height:0!important;margin-bottom:0;padding-top:0;padding-bottom:0;overflow:hidden;}
   .sess ul{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:0;}
   .sess li{display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:400;border-top:1px solid var(--hairline);padding:9px 0;}
   .sess li .nm{color:var(--ink-2);}
-  .sess li .nm small{color:var(--ink-3);margin-left:6px;font-variant-numeric:normal;}
-  .sess li .v{font-weight:500;font-variant-numeric:normal;}
+  .sess li .nm small{color:var(--ink-3);margin-left:6px;}
+  .sess li .v{font-weight:500;}
   .empty-state{text-align:center;color:var(--ink-3);font-weight:400;margin-top:64px;font-size:14px;line-height:1.6;}
   .footer-note{text-align:center;color:var(--ink-4);font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;margin:22px 0 0;}
 
   .stat-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
-  .stat-card{background:var(--white);border:1px solid var(--hairline);border-radius:var(--r-tile);padding:15px;}
+  .stat-card{background:var(--white);border:1px solid var(--hairline);border-radius:var(--r-tile);padding:15px;animation:tileIn .4s var(--spring) backwards;}
+  .stat-card:nth-child(2){animation-delay:.05s}.stat-card:nth-child(3){animation-delay:.1s}.stat-card:nth-child(4){animation-delay:.15s}
   .stat-card .k{font-size:10px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);}
-  .stat-card .v{font-size:34px;font-weight:500;letter-spacing:-.035em;margin-top:8px;font-variant-numeric:normal;line-height:1;}
+  .stat-card .v{font-size:34px;font-weight:500;letter-spacing:-.035em;margin-top:8px;line-height:1;}
   .stat-card.dark{background:var(--graphite);border-color:var(--graphite);}
   .stat-card.dark .k{color:var(--ink-4);}
   .stat-card.dark .v{color:#fff;font-size:20px;letter-spacing:-.02em;}
   .sec-label{font-size:10px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);margin:18px 2px 12px;}
-  .prog{background:var(--white);border:1px solid var(--hairline);border-radius:var(--r-tile);padding:15px;margin-bottom:10px;}
+  .prog{background:var(--white);border:1px solid var(--hairline);border-radius:var(--r-tile);padding:15px;margin-bottom:10px;animation:tileIn .4s var(--spring) backwards;}
   .prog .h{display:flex;justify-content:space-between;align-items:baseline;}
   .prog .h b{font-size:14px;font-weight:500;letter-spacing:-.01em;}
-  .prog .h .now{font-size:16px;font-weight:500;font-variant-numeric:normal;letter-spacing:-.02em;}
+  .prog .h .now{font-size:16px;font-weight:500;letter-spacing:-.02em;}
   .prog .h .now small{color:var(--ink-3);font-weight:500;font-size:11px;margin-left:4px;}
   .prog .h .now small.u{color:var(--sig-green);}.prog .h .now small.d{color:var(--mist);}
   .spark{display:flex;align-items:flex-end;gap:3px;height:42px;margin-top:14px;}
-  .spark i{flex:1;background:var(--graphite);border-radius:2px 2px 0 0;min-height:4px;display:block;}
+  .spark i{flex:1;background:var(--graphite);border-radius:2px 2px 0 0;min-height:4px;display:block;transform-origin:bottom;animation:barGrow .5s var(--ease-out) backwards;}
   .spark i.last{background:var(--accent);}
+  @keyframes barGrow{from{transform:scaleY(0);}to{transform:scaleY(1);}}
+
+  @media (prefers-reduced-motion: reduce){
+    *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;}
+  }
 </style>
 </head>
 <body>
   <div class="wrap">
     <header>
       <div class="brand">
-        <span class="wm">Alexander Senning</span>
-        <span class="wm right">Training Log</span>
+        <span class="wm">Training Log</span>
+        <span class="streak" id="streak" style="display:none"><span class="flame">●</span><span id="streakTxt"></span></span>
       </div>
       <div class="title-row">
-        <h1 id="splitTitle">Oberkörper Druck</h1>
+        <div>
+          <h1 id="splitTitle">Oberkörper Druck</h1>
+        </div>
       </div>
     </header>
 
-    <div class="rings" id="rings"></div>
-
-    <div class="grid" id="grid"></div>
+    <div class="stage" id="stage">
+      <div class="progress-hero">
+        <div class="big-ring" id="bigRing" role="img" aria-label="Fortschritt heute">
+          <svg viewBox="0 0 120 120" id="ringSvg"></svg>
+        </div>
+      </div>
+      <div class="grid" id="grid"></div>
+    </div>
   </div>
 
   <div class="bottom">
@@ -286,6 +427,19 @@
     </div>
   </div>
 
+  <!-- Rest timer chip -->
+  <div class="rest" id="rest">
+    <svg class="ringt" width="34" height="34" viewBox="0 0 34 34">
+      <circle class="bg" cx="17" cy="17" r="14" fill="none" stroke-width="3"/>
+      <circle class="fg" id="restRing" cx="17" cy="17" r="14" fill="none" stroke-width="3" stroke-linecap="round"/>
+    </svg>
+    <div>
+      <div class="rl">Pause</div>
+      <div class="rt" id="restTxt">1:30</div>
+    </div>
+    <span class="x">✕</span>
+  </div>
+
   <!-- Exercise modal -->
   <div class="scrim" id="scrim"></div>
   <div class="sheet" id="sheet">
@@ -299,43 +453,68 @@
       <button class="close" id="mClose">✕</button>
     </div>
     <div class="last" id="mLast"><div class="ml">Zuletzt</div>noch keine Daten</div>
-    <div class="fields">
-      <div class="field stepper" data-id="fSets" data-step="1">
-        <label>Sätze</label>
-        <div class="stp-row">
-          <button class="stp-btn" data-step-act="dec" aria-label="weniger" type="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
-          <span class="stp-val" id="fSets">–</span>
-          <button class="stp-btn" data-step-act="inc" aria-label="mehr" type="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><line x1="12" y1="5" x2="12" y2="19"/></svg></button>
+
+    <!-- Plank-Timer -->
+    <div class="timer-block" id="timerBlock" style="display:none">
+      <div class="clock" id="clockTap">
+        <svg viewBox="0 0 200 200" id="clockSvg"></svg>
+        <div class="clock-center">
+          <div class="t-phase" id="tPhase">Bereit</div>
+          <div class="t-time num" id="tTime">1:00</div>
+        </div>
+        <div class="pause-overlay" id="pauseOverlay" style="display:none">
+          <div class="po-label">Pause</div>
+          <div class="po-count num" id="poCount">30</div>
+          <div class="po-sub" id="poSub"></div>
         </div>
       </div>
-      <div class="field stepper" data-id="fStart" data-step="5">
-        <label>Start kg</label>
+      <div class="t-controls" id="tControls">
+        <button class="t-ctl play" id="tPlay" type="button" aria-label="Start"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
+        <button class="t-ctl" id="tPause" type="button" aria-label="Pause"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4.5" height="14" rx="1.5"/><rect x="13.5" y="5" width="4.5" height="14" rx="1.5"/></svg></button>
+        <button class="t-ctl" id="tReset" type="button" aria-label="Zurücksetzen"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg></button>
+      </div>
+      <div class="t-rounds" id="tRounds"></div>
+      <div class="t-result" id="tResult" style="display:none">
+        <button class="btn" id="tFail">Nicht geschafft</button>
+        <button class="btn btn-primary" id="tDone"><span>Geschafft</span><span class="bic">✓</span></button>
+      </div>
+    </div>
+
+    <div class="fields">
+      <div class="field stepper chips-field" data-id="fSets" data-step="1">
+        <label><span>Sätze</span></label>
+        <div class="chip-row" id="setChips"></div>
+        <span id="fSets" style="display:none">–</span>
+      </div>
+      <div class="field stepper hero" data-id="fToday" data-step="5">
+        <label><span id="fTodayLabel">Heute kg</span><span class="drag-hint">ziehen oder halten</span></label>
+        <div class="stp-row">
+          <button class="stp-btn" data-step-act="dec" aria-label="weniger" type="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+          <span class="stp-val" id="fToday">–</span>
+          <button class="stp-btn" data-step-act="inc" aria-label="mehr" type="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><line x1="12" y1="5" x2="12" y2="19"/></svg></button>
+        </div>
+        <div class="ruler" id="ruler" aria-hidden="true"></div>
+      </div>
+      <div class="field stepper compact" data-id="fStart" data-step="5">
+        <label><span>Start kg</span></label>
         <div class="stp-row">
           <button class="stp-btn" data-step-act="dec" aria-label="weniger" type="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
           <span class="stp-val" id="fStart">–</span>
           <button class="stp-btn" data-step-act="inc" aria-label="mehr" type="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><line x1="12" y1="5" x2="12" y2="19"/></svg></button>
         </div>
       </div>
-      <div class="field stepper" data-id="fToday" data-step="5">
-        <label>Heute kg</label>
-        <div class="stp-row">
-          <button class="stp-btn" data-step-act="dec" aria-label="weniger" type="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
-          <span class="stp-val" id="fToday">–</span>
-          <button class="stp-btn" data-step-act="inc" aria-label="mehr" type="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><line x1="12" y1="5" x2="12" y2="19"/></svg></button>
-        </div>
-      </div>
     </div>
     <div class="delta" id="mDelta"></div>
-    <div class="field full" style="margin-top:18px;">
+    <div class="field full" id="notesField" style="margin-top:18px;">
       <label>Notizen / Geräte-Einstellung</label>
       <textarea id="fNotes" placeholder="z.B. Sitz Loch 4, Griff eng …"></textarea>
     </div>
-    <div class="sheet-actions">
+    <div class="sheet-actions" id="sheetActions">
       <button class="clear" id="mClear">Leeren</button>
       <a class="vid-btn" id="mVideo" target="_blank" rel="noopener" aria-label="Übung auf YouTube ansehen" title="Übung auf YouTube ansehen">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
       </a>
-      <button class="btn btn-primary" id="mSave">Fertig</button>
+      <button class="btn btn-primary" id="mSave"><span>Fertig</span><span class="bic">✓</span></button>
     </div>
   </div>
 
@@ -360,7 +539,8 @@
         <h2 id="panelTitle">Historie</h2>
         <button class="x" id="panelClose">✕</button>
       </div>
-      <div class="tabs">
+      <div class="tabs" id="tabsBox">
+        <span class="pill"></span>
         <button class="tab active" id="tabHist">Historie</button>
         <button class="tab" id="tabStats">Statistik</button>
       </div>
@@ -368,7 +548,8 @@
     <div class="panel-body" id="panelBody"></div>
   </div>
 
-  <div class="toast" id="toast"></div>
+  <div class="toast" id="toast"><span class="tick">✓</span><span id="toastTxt"></span></div>
+  <div class="confetti" id="confetti"></div>
 
 <script>
 "use strict";
@@ -376,28 +557,28 @@
 /* ---------------- Data model ---------------- */
 const WORKOUTS = {
   "Oberkörper Druck": { accent:"--mist", items:[
-    { n:"Aufwärmen Laufen",      sets:1, reps:"15 min" },
+    { n:"Aufwärmen Laufen",      sets:1, reps:"15 min", mode:"time", step:5 },
     { n:"Brustpresse",           sets:4, reps:"6–10" },
     { n:"Schulterpresse",        sets:4, reps:"8–10" },
     { n:"Butterfly mit Pads",    sets:3, reps:"10–15" },
     { n:"Brustpresse (Schräg)",  sets:3, reps:"10–12" },
-    { n:"Plank",                 sets:3, reps:"1 min" },
+    { n:"Plank",                 sets:3, reps:"1 min", mode:"time", step:0.5, timer:{work:60,rest:30} },
   ]},
   "Unterkörper": { accent:"--navy", items:[
-    { n:"Aufwärmen Laufen",      sets:1, reps:"15 min" },
+    { n:"Aufwärmen Laufen",      sets:1, reps:"15 min", mode:"time", step:5 },
     { n:"Beinstrecker",          sets:4, reps:"8–10" },
     { n:"Beinbeuger",            sets:4, reps:"8–10" },
     { n:"Beinbeuger (Pause)",    sets:3, reps:"12–15" },
     { n:"Rückenstrecker Stuhl",  sets:3, reps:"12–15" },
-    { n:"Plank",                 sets:3, reps:"1 min" },
+    { n:"Plank",                 sets:3, reps:"1 min", mode:"time", step:0.5, timer:{work:60,rest:30} },
   ]},
   "Oberkörper Zug": { accent:"--sig-green", items:[
-    { n:"Aufwärmen Laufen",          sets:1, reps:"15 min" },
+    { n:"Aufwärmen Laufen",          sets:1, reps:"15 min", mode:"time", step:5 },
     { n:"Latzug (Obergriff breit)",  sets:4, reps:"6–10" },
     { n:"Rudermaschine (breit)",     sets:4, reps:"8–10" },
     { n:"Latzug (Untergriff eng)",   sets:3, reps:"10–12" },
     { n:"Rudermaschine (eng)",       sets:3, reps:"10–12" },
-    { n:"Plank",                     sets:3, reps:"1 min" },
+    { n:"Plank",                     sets:3, reps:"1 min", mode:"time", step:0.5, timer:{work:60,rest:30} },
   ]},
 };
 const SPLIT_NAMES = Object.keys(WORKOUTS);
@@ -410,6 +591,7 @@ let history    = loadJSON(HIST_KEY, []);
 let currentSplit = localStorage.getItem("brutalCurrentSplit") || SPLIT_NAMES[0];
 if(!WORKOUTS[currentSplit]) currentSplit = SPLIT_NAMES[0];
 let activeExercise = null;
+let celebrated = false;
 
 /* ---------------- Helpers ---------------- */
 function loadJSON(k, fb){ try{ const v=JSON.parse(localStorage.getItem(k)); return v??fb; }catch(e){ return fb; } }
@@ -418,6 +600,7 @@ function keyFor(split, name){ return split + "::" + name; }
 function cssVar(v){ return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
 const el = id => document.getElementById(id);
 const pad2 = n => String(n).padStart(2,"0");
+function haptic(p){ if(navigator.vibrate) navigator.vibrate(p||8); }
 
 function fmtDate(d){
   const days=["So","Mo","Di","Mi","Do","Fr","Sa"];
@@ -433,140 +616,560 @@ function lastSessionFor(split, name){
   return null;
 }
 
-/* ---------------- Header ---------------- */
-function setSplit(name){
+/* ---------------- Streak (Trainingswoche) ---------------- */
+function updateStreak(){
+  const box=el("streak");
+  if(!history.length){ box.style.display="none"; return; }
+  // Anzahl unterschiedlicher Trainingstage in den letzten 7 Tagen
+  const now=Date.now(), week=7*864e5;
+  const days=new Set(history.filter(h=>now-new Date(h.date).getTime()<week).map(h=>new Date(h.date).toDateString()));
+  if(days.size>0){
+    box.style.display="flex";
+    el("streakTxt").textContent = days.size + "× diese Woche";
+  } else box.style.display="none";
+}
+
+/* ---------------- Header / Split ---------------- */
+function setSplit(name, animate){
+  const oldIdx=SPLIT_NAMES.indexOf(currentSplit), newIdx=SPLIT_NAMES.indexOf(name);
   currentSplit=name;
   localStorage.setItem("brutalCurrentSplit", name);
-  el("splitTitle").textContent=name;
-  document.documentElement.style.setProperty("--accent", cssVar(WORKOUTS[name].accent));
-  renderGrid();
+  celebrated=false;
+  const apply=()=>{
+    el("splitTitle").textContent=name;
+    document.documentElement.style.setProperty("--accent", cssVar(WORKOUTS[name].accent));
+    buildRings();
+    renderGrid(true);
+  };
+  if(animate && oldIdx!==newIdx){
+    const stage=el("stage"), h1=el("splitTitle");
+    const dir = newIdx>oldIdx ? "left" : "right";
+    stage.classList.add("out-"+dir); h1.classList.add("switching");
+    setTimeout(()=>{
+      apply();
+      stage.classList.remove("out-left","out-right");
+      stage.classList.add(dir==="left"?"in-left":"in-right");
+      h1.classList.remove("switching");
+      setTimeout(()=>stage.classList.remove("in-left","in-right"),300);
+    },200);
+  } else apply();
 }
 
 /* ---------------- Grid ---------------- */
-// Primary palette for tiles (no graphite). inv = white text on dark tile.
-const EX_PALETTE = [
-  { bg:"--navy",  inv:true  },
-  { bg:"--slate", inv:false },
-  { bg:"--cloud", inv:false },
-  { bg:"--mist",  inv:true  },
-  { bg:"--slate", inv:false },
-  { bg:"--navy",  inv:true  },
-];
-function renderGrid(){
+let holdTimer=null, holdFired=false;
+function renderGrid(animate){
   const grid=el("grid"); grid.innerHTML="";
   const items=WORKOUTS[currentSplit].items;
   items.forEach((ex,i)=>{
     const k=keyFor(currentSplit, ex.n);
     const d=liveData[k];
     const logged = d && (d.today!=="" && d.today!=null);
-    const pal=EX_PALETTE[i % EX_PALETTE.length];
+    const isTime = ex.mode==="time";
     const div=document.createElement("div");
-    div.className="ex"+(logged?" done":"")+(pal.inv?" inv":"");
-    div.style.background=cssVar(pal.bg);
-    const check = logged ? `<span class="chk">✓</span>` : ``;
-    div.innerHTML=`
-      <div class="ex-top"><div class="ex-name">${ex.n}</div>${check}</div>
-      <div class="ex-bottom"><div class="ex-reps num">${ex.sets} × ${ex.reps}</div></div>`;
-    div.onclick=()=>openExercise(ex,i);
+    div.className="ex"+(isTime?" wide":"")+(logged?" done":"")+(animate?" enter":"");
+    if(animate) div.style.animationDelay=(i*45)+"ms";
+    const check = logged ? `<span class="chk">✓</span>` : `<span class="chk ghost">+</span>`;
+    const last=lastSessionFor(currentSplit, ex.n);
+    const lastTxt = logged
+      ? (isTime ? `Heute ${d.today} min` : `Heute ${d.today} kg`)
+      : (last ? (isTime ? `Zuletzt ${last.rec.today} min` : `Zuletzt ${last.rec.today} kg`) : "");
+    if(isTime){
+      div.innerHTML=`
+        <span class="shine"></span><span class="holdring"></span>
+        <div class="ex-top"><div><div class="ex-name">${escapeHtml(ex.n)}</div>${lastTxt?`<div class="ex-meta">${lastTxt}</div>`:""}</div></div>
+        <div class="ex-bottom"><div class="ex-reps num">${ex.reps}</div>${logged
+          ? `<span class="go solid">✓</span>`
+          : `<span class="go"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span>`}</div>`;
+    } else {
+      div.innerHTML=`
+        <span class="shine"></span><span class="holdring"></span>
+        <div class="ex-top"><div class="ex-name">${escapeHtml(ex.n)}</div>${check}</div>
+        <div class="ex-meta">${lastTxt||"&nbsp;"}</div>
+        <div class="ex-bottom"><div class="dots">${renderDots(ex.sets,d)}</div><div class="ex-reps num">${ex.sets} × ${ex.reps}</div></div>`;
+    }
+    // Tap = öffnen, Long-Press = Schnelleintrag mit letzten Werten
+    div.addEventListener("pointerdown", e=>{
+      holdFired=false;
+      div.classList.add("holding");
+      holdTimer=setTimeout(()=>{ holdFired=true; div.classList.remove("holding"); quickLog(ex, div); }, 550);
+    });
+    const cancel=()=>{ clearTimeout(holdTimer); div.classList.remove("holding"); };
+    div.addEventListener("pointerup", e=>{ cancel(); if(!holdFired) openExercise(ex,i); });
+    div.addEventListener("pointerleave", cancel);
+    div.addEventListener("pointercancel", cancel);
+    div.addEventListener("contextmenu", e=>e.preventDefault());
     grid.appendChild(div);
   });
-  updateProgress();
-  renderRings();
+  updateRings();
   updateBadge();
+  updateStreak();
+}
+/* Long-Press: letzte Werte (oder Planwerte) direkt eintragen */
+function quickLog(ex, tile){
+  const k=keyFor(currentSplit, ex.n);
+  const d=liveData[k];
+  const logged = d && (d.today!=="" && d.today!=null);
+  if(logged){ // bereits eingetragen → Eintrag entfernen (toggle)
+    delete liveData[k]; saveJSON(DATA_KEY, liveData);
+    haptic([10,40,10]); renderGrid(false);
+    toast(ex.n+" zurückgesetzt");
+    return;
+  }
+  const last=lastSessionFor(currentSplit, ex.n);
+  let rec;
+  if(last && last.rec){
+    rec={ sets:last.rec.sets??ex.sets, start:last.rec.start??"", today:last.rec.today, notes:last.rec.notes||"" };
+  } else if(ex.mode==="time"){
+    const p=parseFloat(ex.reps); rec={ sets:ex.sets, start:"", today:isNaN(p)?1:p, notes:"" };
+  } else {
+    toast("Noch keine letzten Werte – kurz antippen"); haptic(20); return;
+  }
+  liveData[k]=rec; saveJSON(DATA_KEY, liveData);
+  haptic([12,30,12]);
+  renderGrid(false);
+  // Pop-Animation auf der neuen Kachel
+  const idx=WORKOUTS[currentSplit].items.indexOf(ex);
+  const nt=el("grid").children[idx];
+  if(nt){ nt.classList.add("just-done"); setTimeout(()=>nt.classList.remove("just-done"),600); }
+  toast(ex.n+" übernommen"+(ex.mode==="time"?` · ${rec.today} min`:` · ${rec.today} kg`));
 }
 function updateBadge(){
   const b=el("histBadge"); if(b) b.style.display = (history && history.length>0) ? "block" : "none";
 }
 
-/* ---------------- Ring progress (per exercise) ---------------- */
-const RING_COLORS = ["--navy","--mist","--slate","--navy","--mist","--slate"];
-function renderRings(){
-  const box=el("rings"); if(!box) return;
+/* ---------------- Konzentrische Ringe – einer pro Übung (wie am Anfang) ---------------- */
+let ringMeta=[];
+function buildRings(){
+  const svg=el("ringSvg");
   const items=WORKOUTS[currentSplit].items;
-  const cx=50, cy=50, rOuter=47, step=6.3, sw=4;
-  let arcs="";
+  const c=60, rOuter=56, step=6.4, sw=4.6;
+  ringMeta=[];
+  let s="";
   items.forEach((ex,i)=>{
     const r=rOuter - i*step;
     const circ=2*Math.PI*r;
-    const d=liveData[keyFor(currentSplit, ex.n)];
-    const logged = d && (d.today!=="" && d.today!=null);
-    let frac=0;
-    if(logged){ const s=parseInt(d.sets)||0; frac = s>0 ? Math.min(s/ex.sets,1) : 1; }
-    const col=cssVar(RING_COLORS[i % RING_COLORS.length]);
-    const dash=frac*circ;
-    arcs += `<circle cx="${cx}" cy="${cy}" r="${r.toFixed(2)}" fill="none" stroke="#e6e6ea" stroke-width="${sw}"/>`;
-    if(frac>0){
-      arcs += `<circle cx="${cx}" cy="${cy}" r="${r.toFixed(2)}" fill="none" stroke="${col}" stroke-width="${sw}" stroke-linecap="round" stroke-dasharray="${dash.toFixed(2)} ${circ.toFixed(2)}" transform="rotate(-90 ${cx} ${cy})"/>`;
-    }
+    ringMeta.push({circ});
+    s+=`<circle class="bg" cx="${c}" cy="${c}" r="${r.toFixed(2)}" fill="none" stroke-width="${sw}"/>`;
+    s+=`<circle class="fg" data-ring="${i}" cx="${c}" cy="${c}" r="${r.toFixed(2)}" fill="none" stroke-width="${sw}" stroke-linecap="round"
+        stroke-dasharray="${circ.toFixed(2)}" stroke-dashoffset="${circ.toFixed(2)}" transform="rotate(-90 ${c} ${c})"/>`;
   });
-  box.innerHTML = `<div class="chart"><svg viewBox="0 0 100 100">${arcs}</svg></div>`;
+  svg.innerHTML=s;
+  // sanfter Einflug bei jedem Neuaufbau (Split-Wechsel)
+  svg.classList.remove("fresh");
+  void svg.getBoundingClientRect();
+  svg.classList.add("fresh");
 }
-function renderDots(setCount, d){
-  const filled = d && d.sets ? Math.min(setCount, parseInt(d.sets)||0) : 0;
-  let s=""; for(let i=0;i<setCount;i++) s+=`<i class="${i<filled?'on':''}"></i>`;
-  return s;
-}
-function updateProgress(){
-  const p=el("progressPill"); if(!p) return;
+function updateRings(){
   const items=WORKOUTS[currentSplit].items;
   let done=0;
-  items.forEach(ex=>{ const d=liveData[keyFor(currentSplit,ex.n)]; if(d && d.today!=="" && d.today!=null) done++; });
-  p.innerHTML=`<b>${done}</b> / ${items.length} erledigt`;
+  items.forEach((ex,i)=>{
+    const d=liveData[keyFor(currentSplit, ex.n)];
+    const logged = d && d.today!=="" && d.today!=null;
+    let frac=0;
+    if(logged){ const sNum=parseInt(d.sets)||0; frac = sNum>0 ? Math.min(sNum/ex.sets,1) : 1; done++; }
+    const fg=document.querySelector(`circle.fg[data-ring="${i}"]`);
+    if(fg){
+      const {circ}=ringMeta[i];
+      requestAnimationFrame(()=>{ fg.style.strokeDashoffset=(circ*(1-frac)).toFixed(2); });
+    }
+  });
+  if(done===items.length && items.length>0 && !celebrated){
+    celebrated=true;
+    const hr=el("bigRing");
+    hr.classList.add("celebrate"); setTimeout(()=>hr.classList.remove("celebrate"),750);
+    confetti(); haptic([15,60,15,60,30]);
+  } else if(done<items.length){
+    celebrated=false;
+  }
 }
 
-/* ---------------- Stepper helpers ---------------- */
+/* ---------------- Confetti ---------------- */
+function confetti(){
+  const box=el("confetti");
+  const cols=[cssVar("--mist"),cssVar("--navy"),cssVar("--sig-orange"),cssVar("--slate"),cssVar("--graphite")];
+  for(let i=0;i<34;i++){
+    const p=document.createElement("i");
+    p.style.left=(5+Math.random()*90)+"%";
+    p.style.background=cols[i%cols.length];
+    p.style.setProperty("--dur",(1.3+Math.random()*1.2)+"s");
+    p.style.setProperty("--del",(Math.random()*.35)+"s");
+    p.style.setProperty("--rot",(360+Math.random()*540)+"deg");
+    p.style.setProperty("--dx",((Math.random()-.5)*120)+"px");
+    p.style.width=(6+Math.random()*5)+"px";
+    p.style.height=(9+Math.random()*6)+"px";
+    box.appendChild(p);
+    setTimeout(()=>p.remove(),3200);
+  }
+}
+
+/* ---------------- Stepper: Tap, Hold-Repeat & Scrubbing ---------------- */
 function stpGet(id){
   const t=el(id).textContent.trim();
   if(t===''||t==='–') return '';
   const v=parseFloat(t);
   return isNaN(v) ? '' : v;
 }
-function stpSet(id, v){
-  el(id).textContent = (v===''||v==null) ? '–' : String(v);
+function stpSet(id, v, dir){
+  const node=el(id);
+  node.textContent = (v===''||v==null) ? '–' : String(v);
+  if(id==='fSets') paintChips(v);
+  if(id==='fToday') updateRuler();
+  if(dir && node.classList.contains("stp-val")){
+    node.classList.remove("bump-up","bump-down");
+    void node.offsetWidth;
+    node.classList.add(dir>0?"bump-up":"bump-down");
+  }
 }
-function stepperClick(e){
-  const btn=e.target.closest('.stp-btn'); if(!btn) return;
-  const field=btn.closest('.field.stepper'); if(!field) return;
+function renderDots(setCount, d){
+  const filled = d && d.sets ? Math.min(setCount, parseInt(d.sets)||0) : 0;
+  let s=""; for(let i=0;i<setCount;i++) s+=`<i class="${i<filled?'on':''}"></i>`;
+  return s;
+}
+/* Sätze-Chips */
+function paintChips(v){
+  document.querySelectorAll("#setChips .chip").forEach(c=>c.classList.toggle("on", String(c.dataset.v)===String(v)));
+}
+(function buildChips(){
+  const row=el("setChips");
+  for(let i=1;i<=5;i++){
+    const b=document.createElement("button");
+    b.type="button"; b.className="chip"; b.dataset.v=i; b.textContent=i;
+    b.onclick=()=>{ const cur=stpGet("fSets"); stpSet("fSets", cur===i ? "" : i); haptic(6); };
+    row.appendChild(b);
+  }
+})();
+function stepField(field, dir){
   const id=field.dataset.id; const step=parseFloat(field.dataset.step)||1;
   let v=stpGet(id);
   if(v==='') v=0;
-  v = btn.dataset.stepAct==='inc' ? v+step : Math.max(0, v-step);
-  stpSet(id, v);
-  if(id==='fStart' || id==='fToday') computeDelta();
+  v = dir>0 ? +(v+step).toFixed(2) : Math.max(0, +(v-step).toFixed(2));
+  stpSet(id, v, dir);
+  haptic(6);
+  if(id==='fStart' || id==='fToday') computeDelta(true);
 }
+/* Tap + Hold-to-repeat auf den +/- Buttons */
+let repT=null, repI=null;
+document.querySelectorAll(".stp-btn").forEach(btn=>{
+  const field=btn.closest(".field.stepper");
+  const dir=btn.dataset.stepAct==="inc"?1:-1;
+  const start=e=>{
+    e.preventDefault();
+    stepField(field,dir);
+    repT=setTimeout(()=>{ repI=setInterval(()=>stepField(field,dir),110); },450);
+  };
+  const stop=()=>{ clearTimeout(repT); clearInterval(repI); };
+  btn.addEventListener("pointerdown",start);
+  btn.addEventListener("pointerup",stop);
+  btn.addEventListener("pointerleave",stop);
+  btn.addEventListener("pointercancel",stop);
+});
+/* Lineal unter "Heute kg": Skala wandert mit dem Wert, ziehen stellt ein */
+const RULER_PX=12; // Pixel pro Schritt
+function updateRuler(){
+  const f=el("ruler"); if(!f) return;
+  const field=el("fToday").closest(".field.stepper");
+  const step=parseFloat(field.dataset.step)||1;
+  let v=stpGet("fToday"); if(v==='') v=0;
+  const px=-(v/step)*RULER_PX;
+  f.style.backgroundPosition=`calc(50% + ${px}px) 100%, calc(50% + ${px}px) 100%`;
+}
+(function(){
+  const f=el("ruler"); if(!f) return;
+  let sx=0, sv=0, act=false, moved=0;
+  f.addEventListener("pointerdown",e=>{
+    act=true; moved=0; sx=e.clientX;
+    let v=stpGet("fToday"); sv = v===''?0:v;
+    f.setPointerCapture(e.pointerId);
+  });
+  f.addEventListener("pointermove",e=>{
+    if(!act) return;
+    const field=el("fToday").closest(".field.stepper");
+    const step=parseFloat(field.dataset.step)||1;
+    const ticks=Math.round((sx-e.clientX)/RULER_PX); // Skala folgt dem Finger
+    if(ticks!==moved){
+      moved=ticks;
+      const nv=Math.max(0,+(sv+ticks*step).toFixed(2));
+      stpSet("fToday",nv);
+      haptic(4);
+      computeDelta();
+    }
+  });
+  const end=()=>{ act=false; };
+  f.addEventListener("pointerup",end);
+  f.addEventListener("pointercancel",end);
+})();
+
+/* Scrubbing: Wert horizontal ziehen */
+document.querySelectorAll(".stp-val").forEach(node=>{
+  const field=node.closest(".field.stepper");
+  let startX=0, startV=0, active=false, moved=0;
+  node.addEventListener("pointerdown",e=>{
+    active=true; moved=0;
+    startX=e.clientX;
+    let v=stpGet(node.id); startV = v===''?0:v;
+    node.classList.add("scrubbing");
+    node.setPointerCapture(e.pointerId);
+  });
+  node.addEventListener("pointermove",e=>{
+    if(!active) return;
+    const step=parseFloat(field.dataset.step)||1;
+    const dx=e.clientX-startX;
+    const ticks=Math.round(dx/22);
+    if(ticks!==moved){
+      moved=ticks;
+      const nv=Math.max(0,+(startV+ticks*step).toFixed(2));
+      stpSet(node.id,nv);
+      haptic(4);
+      if(node.id==='fStart'||node.id==='fToday') computeDelta();
+    }
+  });
+  const end=()=>{ active=false; node.classList.remove("scrubbing"); };
+  node.addEventListener("pointerup",end);
+  node.addEventListener("pointercancel",end);
+});
+
+/* ---------------- Plank-Timer (analoge Uhr) ---------------- */
+const T={phases:[],idx:0,remain:0,dur:0,running:false,iv:null,lastTs:0,finished:false,ex:null};
+const CLOCK_CIRC=2*Math.PI*96;
+function buildClockFace(){
+  const svg=el("clockSvg");
+  const c=100;
+  let m="";
+  // Zifferblatt
+  m+=`<circle class="face" cx="${c}" cy="${c}" r="88"/>`;
+  // Pausen-Sektor: füllt sich in 30 s blau
+  m+=`<path class="pie" id="clockPie" d=""/>`;
+  for(let i=0;i<60;i++){
+    const a=(i/60)*Math.PI*2 - Math.PI/2;
+    const major=i%5===0;
+    const r1=major?76:81, r2=86;
+    m+=`<line class="${major?'tickM':'tickm'}" x1="${(c+Math.cos(a)*r1).toFixed(1)}" y1="${(c+Math.sin(a)*r1).toFixed(1)}" x2="${(c+Math.cos(a)*r2).toFixed(1)}" y2="${(c+Math.sin(a)*r2).toFixed(1)}" stroke-width="${major?2.6:1.6}" stroke-linecap="round"/>`;
+  }
+  // Fortschritts-Ring außen
+  m+=`<circle class="arc" cx="${c}" cy="${c}" r="96" fill="none" stroke-width="5" stroke-linecap="round"
+      stroke-dasharray="${CLOCK_CIRC.toFixed(1)}" stroke-dashoffset="${CLOCK_CIRC.toFixed(1)}" transform="rotate(-90 ${c} ${c})" id="clockArc"/>`;
+  // Zeiger + Achse
+  m+=`<line class="hand" id="clockHand" x1="${c}" y1="${c+10}" x2="${c}" y2="34" stroke-width="4.5" stroke-linecap="round"/>`;
+  m+=`<circle class="pin" cx="${c}" cy="${c}" r="6"/>`;
+  svg.innerHTML=m;
+}
+function setupTimer(ex){
+  stopTick();
+  T.ex=ex; T.phases=[]; T.finished=false; T.running=false;
+  const rounds=ex.sets||3, w=ex.timer.work, r=ex.timer.rest;
+  for(let i=0;i<rounds;i++){
+    T.phases.push({type:"work",dur:w,set:i+1});
+    if(i<rounds-1) T.phases.push({type:"rest",dur:r});
+  }
+  T.idx=0; T.dur=T.phases[0].dur; T.remain=T.dur;
+  buildClockFace();
+  el("tResult").style.display="none";
+  el("tControls").style.display="flex";
+  el("pauseOverlay").style.display="none";
+  paintTimer();
+}
+function sectorPath(frac){
+  const c=100, r=88;
+  if(frac<=0) return "";
+  if(frac>=1) return `M ${c-r} ${c} a ${r} ${r} 0 1 0 ${2*r} 0 a ${r} ${r} 0 1 0 ${-2*r} 0 Z`;
+  const a=frac*2*Math.PI - Math.PI/2;
+  const x=c+Math.cos(a)*r, y=c+Math.sin(a)*r;
+  const large=frac>0.5?1:0;
+  return `M ${c} ${c} L ${c} ${c-r} A ${r} ${r} 0 ${large} 1 ${x.toFixed(2)} ${y.toFixed(2)} Z`;
+}
+function paintTimer(){
+  const ph=T.phases[T.idx];
+  const clock=el("clockTap");
+  if(T.finished){
+    el("tPhase").textContent="Fertig";
+    el("tTime").textContent="3 Sätze";
+    el("tTime").style.fontSize=""; el("tTime").style.color="";
+    el("pauseOverlay").style.display="none";
+    el("clockHand").setAttribute("transform","rotate(0 100 100)");
+    el("clockArc").style.strokeDashoffset=0;
+    el("clockPie").setAttribute("d","");
+    clock.classList.remove("is-rest");
+  } else {
+    const isRest = ph.type==="rest";
+    clock.classList.toggle("is-rest", isRest);
+    el("tPhase").textContent = ph.type==="work" ? `Satz ${ph.set} / ${T.ex.sets}` : "Pause";
+    const sec=Math.max(0,Math.ceil(T.remain));
+    el("tTime").textContent = `${Math.floor(sec/60)}:${pad2(sec%60)}`;
+    // Pause: eigenes Overlay mit großem Countdown über der Uhr
+    const ov=el("pauseOverlay");
+    if(isRest){
+      ov.style.display="flex";
+      el("poCount").textContent=String(sec);
+      const next=T.phases.slice(T.idx).find(x=>x.type==="work");
+      el("poSub").textContent = next ? `gleich Satz ${next.set} / ${T.ex.sets}` : "";
+    } else {
+      ov.style.display="none";
+    }
+    const frac=1 - T.remain/T.dur;
+    // Pause: Zeiger steht auf 12, nur der Countdown läuft
+    el("clockHand").setAttribute("transform",`rotate(${isRest ? 0 : (frac*360).toFixed(2)} 100 100)`);
+    el("clockArc").style.strokeDashoffset=(CLOCK_CIRC*(1-frac)).toFixed(1);
+    el("clockPie").setAttribute("d","");
+  }
+  // Satz-Balken: voll = absolvierte Sätze, halb = laufender Satz
+  const doneSets=T.phases.slice(0,T.idx).filter(x=>x.type==="work").length + (T.finished?0:0);
+  const cur=!T.finished && T.phases[T.idx].type==="work" ? T.phases[T.idx].set : 0;
+  let bars="";
+  for(let i=1;i<=(T.ex?T.ex.sets:3);i++){
+    const cls = T.finished||i<=doneSets ? "on" : (i===cur && T.running ? "half" : "");
+    bars+=`<i class="${cls}"></i>`;
+  }
+  el("tRounds").innerHTML=bars;
+  // Play/Pause-Zustände
+  const pl=el("tPlay"), pa=el("tPause");
+  if(pl&&pa){
+    pl.disabled = T.running || T.finished;
+    pa.disabled = !T.running;
+  }
+}
+function stopTick(){ if(T.iv){ clearInterval(T.iv); T.iv=null; } T.running=false; }
+function startTick(){
+  T.running=true; T.lastTs=performance.now();
+  T.iv=setInterval(()=>{
+    const now=performance.now();
+    T.remain -= (now-T.lastTs)/1000;
+    T.lastTs=now;
+    if(T.remain<=0){
+      T.idx++;
+      if(T.idx>=T.phases.length){
+        // alle Sätze durch
+        stopTick();
+        T.finished=true;
+        haptic([80,60,80,60,160]);
+        el("clockTap").classList.add("alarm");
+        setTimeout(()=>el("clockTap").classList.remove("alarm"),900);
+        el("tResult").style.display="flex";
+        el("tControls").style.display="none";
+        el("pauseOverlay").style.display="none";
+        paintTimer();
+        return;
+      }
+      T.dur=T.phases[T.idx].dur;
+      T.remain=T.dur;
+      haptic([60,60,60]); // Phasenwechsel
+      el("clockTap").classList.add("alarm");
+      setTimeout(()=>el("clockTap").classList.remove("alarm"),900);
+    }
+    paintTimer();
+  },100);
+}
+el("clockTap").onclick=()=>{
+  if(T.finished) return;
+  if(T.running){ stopTick(); haptic(8); }
+  else { startTick(); haptic(8); }
+  paintTimer();
+};
+el("tPlay").onclick=()=>{ if(!T.running && !T.finished){ startTick(); haptic(8); paintTimer(); } };
+el("tPause").onclick=()=>{ if(T.running){ stopTick(); haptic(8); paintTimer(); } };
+el("tReset").onclick=()=>{ setupTimer(activeExercise); haptic(10); };
+el("tDone").onclick=()=>{
+  if(!activeExercise) return;
+  const k=keyFor(currentSplit, activeExercise.n);
+  const prev=liveData[k]||{};
+  const mins=parseFloat(activeExercise.reps)||1;
+  liveData[k]={ sets:activeExercise.sets, start:"", today:mins, notes:prev.notes||"" };
+  saveJSON(DATA_KEY, liveData);
+  stopTick();
+  renderGrid(false);
+  closeSheet();
+  haptic([15,50,15,50,30]);
+  toast(`${activeExercise.n} geschafft – stark!`);
+};
+el("tFail").onclick=()=>{
+  stopTick();
+  closeSheet();
+  toast("Kein Stress – nächstes Mal!");
+};
 
 /* ---------------- Exercise modal ---------------- */
 function openExercise(ex,i){
   activeExercise=ex;
   const k=keyFor(currentSplit, ex.n);
   const d=liveData[k]||{};
-  const pal=EX_PALETTE[i % EX_PALETTE.length];
+  const loggedNow = d && (d.today!=="" && d.today!=null);
   el("mIcon").textContent="";
-  el("mIcon").style.background=cssVar(pal.bg);
+  el("mIcon").style.background=cssVar(loggedNow ? "--mist" : "--navy");
   el("mName").textContent=ex.n;
-  el("mTarget").textContent=`${ex.sets} Sätze · ${ex.reps} Wdh`;
   el("mVideo").href="https://www.youtube.com/results?search_query="+encodeURIComponent(ex.n+" Übung richtige Ausführung");
-  stpSet("fSets", d.sets ?? "");
-  stpSet("fStart", d.start ?? "");
-  stpSet("fToday", d.today ?? "");
   el("fNotes").value = d.notes ?? "";
 
+  const isTime = ex.mode === "time";
+  const timerMode = !!ex.timer;
+  const fSetsField  = el("fSets").closest(".field.stepper");
+  const fStartField = el("fStart").closest(".field.stepper");
+  const fTodayField = el("fToday").closest(".field.stepper");
   const last=lastSessionFor(currentSplit, ex.n);
   const lastBox=el("mLast");
-  if(last){
-    lastBox.classList.remove("empty");
-    const r=last.rec;
-    lastBox.innerHTML=`<div class="ml">Zuletzt</div><span class="recap">${r.today||"–"} kg</span> · ${r.sets||"–"} Sätze`+
-      (r.notes?` · <span style="color:var(--ink-3)">${escapeHtml(r.notes)}</span>`:"");
-    if(stpGet("fStart")==="" && r.today!=null && r.today!=="") stpSet("fStart", r.today);
+
+  if(isTime){
+    fSetsField.style.display = "none";
+    fStartField.style.display = "none";
+    el("fTodayLabel").textContent = "Minuten";
+    fTodayField.dataset.step = String(ex.step || 1);
+    el("mDelta").style.display = "none";
+    el("mTarget").textContent = `${ex.sets} × ${ex.reps}`;
+    stpSet("fSets", ex.sets);
+    stpSet("fStart", "");
+    let initial = d.today;
+    if(initial===undefined || initial===null || initial===""){
+      if(last && last.rec && last.rec.today!=="" && last.rec.today!=null) initial = last.rec.today;
+      else { const p = parseFloat(ex.reps); initial = isNaN(p) ? "" : p; }
+    }
+    stpSet("fToday", initial);
+    if(last){
+      lastBox.classList.remove("empty");
+      const r=last.rec;
+      lastBox.innerHTML=`<div><div class="ml">Zuletzt</div><span class="recap">${r.today||"–"} min</span>`+
+        (r.notes?` · <span style="color:var(--ink-3)">${escapeHtml(r.notes)}</span>`:"")+`</div>`;
+    } else {
+      lastBox.classList.add("empty");
+      lastBox.innerHTML=`<div class="ml">Zuletzt</div>noch keine Daten`;
+    }
   } else {
-    lastBox.classList.add("empty");
-    lastBox.innerHTML=`<div class="ml">Zuletzt</div>noch keine Daten`;
+    fSetsField.style.display = "";
+    fStartField.style.display = "";
+    el("fTodayLabel").textContent = "Heute kg";
+    fTodayField.dataset.step = "5";
+    el("mDelta").style.display = "";
+    el("mTarget").textContent = `${ex.sets} Sätze · ${ex.reps} Wdh`;
+    stpSet("fSets", d.sets ?? "");
+    stpSet("fStart", d.start ?? "");
+    stpSet("fToday", d.today ?? "");
+    if(last){
+      lastBox.classList.remove("empty");
+      const r=last.rec;
+      lastBox.innerHTML=`<div><div class="ml">Zuletzt</div><span class="recap">${r.today||"–"} kg</span> · ${r.sets||"–"} Sätze`+
+        (r.notes?` · <span style="color:var(--ink-3)">${escapeHtml(r.notes)}</span>`:"")+`</div>
+        <button class="use" id="mUseLast" type="button">übernehmen</button>`;
+      const ub=el("mUseLast");
+      if(ub) ub.onclick=()=>{
+        stpSet("fSets", r.sets ?? "", 1);
+        stpSet("fStart", r.start ?? r.today ?? "", 1);
+        stpSet("fToday", r.today ?? "", 1);
+        if(r.notes && !el("fNotes").value) el("fNotes").value=r.notes;
+        computeDelta(true); haptic(10);
+      };
+      if(stpGet("fStart")==="" && r.today!=null && r.today!=="") stpSet("fStart", r.today);
+    } else {
+      lastBox.classList.add("empty");
+      lastBox.innerHTML=`<div class="ml">Zuletzt</div>noch keine Daten`;
+    }
   }
   computeDelta();
+  // Plank & Co: analoge Uhr statt Stepper
+  el("timerBlock").style.display = timerMode ? "" : "none";
+  document.querySelector("#sheet .fields").style.display = timerMode ? "none" : "";
+  el("notesField").style.display = timerMode ? "none" : "";
+  el("sheetActions").style.display = "flex";
+  if(timerMode){ el("mDelta").style.display="none"; setupTimer(ex); }
   openSheet();
 }
-function computeDelta(){
+function computeDelta(flash){
   const sV=stpGet("fStart"), tV=stpGet("fToday");
   const start=sV===""?NaN:Number(sV), today=tV===""?NaN:Number(tV);
   const box=el("mDelta"); box.className="delta";
@@ -575,10 +1178,38 @@ function computeDelta(){
     if(diff>0){ box.classList.add("up"); box.textContent=`▲ +${diff} kg ggü. Start`; }
     else if(diff<0){ box.classList.add("down"); box.textContent=`▼ ${diff} kg ggü. Start`; }
     else box.textContent="= gleich wie Start";
+    if(flash){ box.classList.add("flash"); setTimeout(()=>box.classList.remove("flash"),450); }
   } else box.textContent="";
 }
 function openSheet(){ el("scrim").classList.add("open"); el("sheet").classList.add("open"); }
-function closeSheet(){ el("scrim").classList.remove("open"); el("sheet").classList.remove("open"); }
+function closeSheet(){ el("scrim").classList.remove("open"); el("sheet").classList.remove("open"); stopTick(); }
+
+/* Swipe-to-close für beide Sheets */
+function makeSheetDraggable(sheetId, closeFn){
+  const sheet=el(sheetId);
+  let startY=0, dy=0, dragging=false;
+  sheet.addEventListener("touchstart",e=>{
+    if(sheet.scrollTop>2) return;
+    startY=e.touches[0].clientY; dy=0; dragging=true;
+  },{passive:true});
+  sheet.addEventListener("touchmove",e=>{
+    if(!dragging) return;
+    dy=e.touches[0].clientY-startY;
+    if(dy>0){
+      sheet.classList.add("dragging");
+      sheet.style.transform=`translateY(${dy*0.85}px)`;
+    }
+  },{passive:true});
+  sheet.addEventListener("touchend",()=>{
+    if(!dragging) return;
+    dragging=false;
+    sheet.classList.remove("dragging");
+    sheet.style.transform="";
+    if(dy>110){ closeFn(); haptic(8); }
+  });
+}
+makeSheetDraggable("sheet", closeSheet);
+makeSheetDraggable("splitSheet", ()=>closeSplitSheet());
 
 /* ---------------- Split picker popup ---------------- */
 function openSplitSheet(){
@@ -586,29 +1217,87 @@ function openSplitSheet(){
   SPLIT_NAMES.forEach(name=>{
     const row=document.createElement("div");
     row.className="split-row"+(name===currentSplit?" active":"");
+    // Fortschritt je Split anzeigen
+    const items=WORKOUTS[name].items;
+    let done=0; items.forEach(ex=>{ const d=liveData[keyFor(name,ex.n)]; if(d&&d.today!==""&&d.today!=null) done++; });
     row.innerHTML=`<span class="dot" style="background:${cssVar(WORKOUTS[name].accent)}"></span>`+
-      `<span class="nm">${name}</span>`+
-      (name===currentSplit?`<span class="tick">aktiv</span>`:"");
-    row.onclick=()=>{ setSplit(name); closeSplitSheet(); toast(name); };
+      `<span class="nm">${escapeHtml(name)}</span>`+
+      (done>0?`<span class="tick">${done}/${items.length}</span>`:(name===currentSplit?`<span class="tick">aktiv</span>`:""));
+    row.onclick=()=>{ closeSplitSheet(); setSplit(name,true); haptic(8); };
     list.appendChild(row);
   });
   el("splitScrim").classList.add("open"); el("splitSheet").classList.add("open");
 }
 function closeSplitSheet(){ el("splitScrim").classList.remove("open"); el("splitSheet").classList.remove("open"); }
 
+/* ---------------- Rest-Timer ---------------- */
+const REST_SECONDS=90;
+let restT=null, restLeft=0;
+const restCirc=2*Math.PI*14;
+el("restRing").style.strokeDasharray=restCirc.toFixed(2);
+function startRest(){
+  clearInterval(restT);
+  restLeft=REST_SECONDS;
+  const chip=el("rest");
+  chip.classList.remove("alarm");
+  chip.classList.add("show");
+  paintRest();
+  restT=setInterval(()=>{
+    restLeft--;
+    paintRest();
+    if(restLeft<=0){
+      clearInterval(restT);
+      chip.classList.add("alarm");
+      haptic([60,80,60,80,120]);
+      el("restTxt").textContent="Go!";
+      setTimeout(()=>chip.classList.remove("show"),2400);
+    }
+  },1000);
+}
+function paintRest(){
+  const m=Math.floor(restLeft/60), s=restLeft%60;
+  el("restTxt").textContent=`${m}:${pad2(s)}`;
+  el("restRing").style.strokeDashoffset=(restCirc*(1-restLeft/REST_SECONDS)).toFixed(2);
+}
+el("rest").onclick=()=>{ clearInterval(restT); el("rest").classList.remove("show"); };
+
 function saveExercise(){
   if(!activeExercise) return;
   const k=keyFor(currentSplit, activeExercise.n);
+  const wasLogged = liveData[k] && liveData[k].today!=="" && liveData[k].today!=null;
   liveData[k]={ sets:stpGet("fSets"), start:stpGet("fStart"), today:stpGet("fToday"), notes:el("fNotes").value.trim() };
   saveJSON(DATA_KEY, liveData);
-  renderGrid();
+  const isTime=activeExercise.mode==="time";
+  const justLogged = liveData[k].today!=="" && liveData[k].today!=null;
+  renderGrid(false);
   closeSheet();
+  haptic([10,40,14]);
+  // Pop auf der Kachel
+  const idx=WORKOUTS[currentSplit].items.indexOf(activeExercise);
+  const nt=el("grid").children[idx];
+  if(nt && justLogged){ nt.classList.add("just-done"); setTimeout(()=>nt.classList.remove("just-done"),600); }
   toast(`${activeExercise.n} gespeichert`);
+  // Rest-Timer nur bei Kraftübungen und neuem Eintrag
+  if(!isTime && justLogged && !wasLogged) startRest();
 }
 function clearExercise(){
   if(!activeExercise) return;
+  if(activeExercise.timer){
+    // Plank & Co: gespeicherten Eintrag direkt entfernen und Uhr zurücksetzen
+    const k=keyFor(currentSplit, activeExercise.n);
+    delete liveData[k];
+    saveJSON(DATA_KEY, liveData);
+    el("fNotes").value="";
+    renderGrid(false);
+    el("mIcon").style.background=cssVar("--navy");
+    setupTimer(activeExercise);
+    haptic(10);
+    toast(activeExercise.n+" geleert");
+    return;
+  }
   stpSet("fSets",""); stpSet("fStart",""); stpSet("fToday",""); el("fNotes").value="";
   computeDelta();
+  haptic(10);
 }
 
 /* ---------------- Finish workout ---------------- */
@@ -624,8 +1313,11 @@ function finishWorkout(){
   saveJSON(HIST_KEY, history);
   items.forEach(ex=>{ delete liveData[keyFor(currentSplit,ex.n)]; });
   saveJSON(DATA_KEY, liveData);
-  renderGrid();
-  toast("Training gespeichert");
+  celebrated=false;
+  renderGrid(true);
+  confetti();
+  haptic([20,60,20,60,40]);
+  toast("Training gespeichert – stark!");
 }
 
 /* ---------------- Export ---------------- */
@@ -648,6 +1340,7 @@ function setTab(t){
   panelTab=t;
   el("tabHist").classList.toggle("active", t==="hist");
   el("tabStats").classList.toggle("active", t==="stats");
+  el("tabsBox").classList.toggle("s2", t==="stats");
   el("panelTitle").textContent = t==="hist"?"Historie":"Statistik";
   renderPanel();
 }
@@ -658,8 +1351,9 @@ function renderPanel(){
 function renderHistoryList(body){
   if(history.length===0){ body.innerHTML=`<div class="empty-state">Noch keine abgeschlossenen Trainings.<br>Trag etwas ein und tippe „Training beenden".</div>`; return; }
   body.innerHTML="";
-  [...history].reverse().forEach(h=>{
+  [...history].reverse().forEach((h,idx)=>{
     const card=document.createElement("div"); card.className="sess";
+    card.style.animationDelay=(Math.min(idx,8)*45)+"ms";
     const dotColor=WORKOUTS[h.workout]?cssVar(WORKOUTS[h.workout].accent):"#252525";
     let li="";
     Object.entries(h.exercises).forEach(([n,r])=>{
@@ -679,28 +1373,35 @@ function renderHistoryList(body){
       <ul>${li}</ul>`;
     body.appendChild(card);
   });
-  body.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>deleteSession(parseInt(b.dataset.del)));
+  body.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>deleteSession(parseInt(b.dataset.del), b.closest(".sess")));
   body.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>reloadSession(parseInt(b.dataset.edit)));
   const note=document.createElement("div"); note.className="footer-note";
   note.textContent=`${history.length} Einheit(en) gespeichert`;
   body.appendChild(note);
 }
-function deleteSession(id){
-  history=history.filter(h=>h.id!==id);
-  saveJSON(HIST_KEY, history);
-  renderPanel();
-  updateBadge();
-  toast("Eintrag gelöscht");
+function deleteSession(id, card){
+  const commit=()=>{
+    history=history.filter(h=>h.id!==id);
+    saveJSON(HIST_KEY, history);
+    renderPanel();
+    updateBadge(); updateStreak();
+    toast("Eintrag gelöscht");
+  };
+  if(card){
+    card.style.maxHeight=card.offsetHeight+"px";
+    requestAnimationFrame(()=>card.classList.add("removing"));
+    haptic(15);
+    setTimeout(commit,330);
+  } else commit();
 }
 function reloadSession(id){
   const h=history.find(x=>x.id===id); if(!h) return;
-  setSplit(h.workout);
   Object.entries(h.exercises).forEach(([n,r])=>{
     liveData[keyFor(h.workout,n)]={ sets:r.sets, start:r.start, today:r.today, notes:r.notes };
   });
   saveJSON(DATA_KEY, liveData);
-  renderGrid();
   closePanel();
+  setSplit(h.workout, true);
   toast("Werte ins Training geladen");
 }
 
@@ -718,9 +1419,9 @@ function renderStats(body){
   const favSplit=Object.entries(splitCount).sort((a,b)=>b[1]-a[1])[0][0];
   body.innerHTML=`
     <div class="stat-cards">
-      <div class="stat-card"><div class="k">Einheiten</div><div class="v">${history.length}</div></div>
-      <div class="stat-card"><div class="k">Sätze gesamt</div><div class="v">${totalSets}</div></div>
-      <div class="stat-card"><div class="k">Volumen · kg</div><div class="v">${Math.round(totalVol).toLocaleString("de-DE")}</div></div>
+      <div class="stat-card"><div class="k">Einheiten</div><div class="v num">${history.length}</div></div>
+      <div class="stat-card"><div class="k">Sätze gesamt</div><div class="v num">${totalSets}</div></div>
+      <div class="stat-card"><div class="k">Volumen · kg</div><div class="v num">${Math.round(totalVol).toLocaleString("de-DE")}</div></div>
       <div class="stat-card dark"><div class="k">Top-Split</div><div class="v">${escapeHtml(favSplit)}</div></div>
     </div>`;
   const byEx={};
@@ -733,15 +1434,17 @@ function renderStats(body){
   const heading=document.createElement("div");
   heading.className="sec-label"; heading.textContent="Verlauf pro Übung";
   body.appendChild(heading);
+  let ci=0;
   Object.entries(byEx).sort((a,b)=>b[1].length-a[1].length).forEach(([n,arr])=>{
     if(arr.length<1) return;
     const max=Math.max(...arr), now=arr[arr.length-1], first=arr[0];
     const trend=+(now-first).toFixed(1);
     const slice=arr.slice(-12);
-    const bars=slice.map((v,idx)=>`<i class="${idx===slice.length-1?'last':''}" style="height:${Math.max(8,(v/max)*100)}%"></i>`).join("");
+    const bars=slice.map((v,idx)=>`<i class="${idx===slice.length-1?'last':''}" style="height:${Math.max(8,(v/max)*100)}%;animation-delay:${idx*35}ms"></i>`).join("");
     const tcls=trend>0?"u":trend<0?"d":"";
     const tlabel=trend>0?"▲ +"+trend:trend<0?"▼ "+trend:"=";
     const card=document.createElement("div"); card.className="prog";
+    card.style.animationDelay=(Math.min(ci++,8)*50)+"ms";
     card.innerHTML=`
       <div class="h"><b>${escapeHtml(n)}</b>
         <div class="now num">${now} kg <small class="${tcls}">${tlabel}</small></div></div>
@@ -753,8 +1456,8 @@ function renderStats(body){
 /* ---------------- Toast ---------------- */
 let toastT;
 function toast(msg){
-  const t=el("toast"); t.textContent=msg; t.classList.add("show");
-  clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove("show"),1800);
+  const t=el("toast"); el("toastTxt").textContent=msg; t.classList.add("show");
+  clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove("show"),1900);
 }
 function escapeHtml(s){ return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m])); }
 
@@ -763,7 +1466,6 @@ el("mClose").onclick=closeSheet;
 el("scrim").onclick=closeSheet;
 el("mSave").onclick=saveExercise;
 el("mClear").onclick=clearExercise;
-el("sheet").addEventListener("click", stepperClick);
 el("finishBtn").onclick=finishWorkout;
 el("historyBtn").onclick=()=>{ setTab("hist"); openPanel(); };
 el("statsBtn").onclick=()=>{ setTab("stats"); openPanel(); };
@@ -775,7 +1477,7 @@ el("panelClose").onclick=closePanel;
 el("tabHist").onclick=()=>setTab("hist");
 el("tabStats").onclick=()=>setTab("stats");
 
-setSplit(currentSplit);
+setSplit(currentSplit, false);
 </script>
 </body>
 </html>
