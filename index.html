@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html lang="de">
-<head> 
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#ffffff">
+<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAIAAAAlC+aJAAAAYklEQVR42u3WsQ2AIBBAUeIEDMEmrMVADEHBZmdjp4kUJsb4Xg0Jn2suJQAAAAD4iZxz3Om9X94tpUTEGOOpx2zmcXzqnHP9sAkIECBAgAABbwbUWs/rU2vNLgQAAAAAH7ED/YpILvcqVK4AAAAASUVORK5CYII=">
+<link rel="icon" type="image/png" sizes="64x64" href="favicon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <title>Training Log</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -37,13 +40,12 @@
   /* ---------- Header ---------- */
   .brand{display:flex;align-items:center;gap:9px;}
   .brand .wm{font-size:12px;font-weight:400;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-4);}
-  .brand .streak{margin-left:auto;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);
-    display:flex;align-items:center;gap:6px;}
+  .brand .streak{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);
+    display:flex;align-items:center;gap:6px;margin-left:14px;}
   .brand .streak .flame{color:var(--mist);}
-  .title-row{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:16px;}
-  h1{font-size:44px;font-weight:400;letter-spacing:-.035em;line-height:.95;margin:0;
+  .brand .split-wm{margin-left:auto;color:var(--mist);text-align:right;
     transition:opacity .18s var(--ease-out), transform .18s var(--ease-out);}
-  h1.switching{opacity:0;transform:translateX(-14px);}
+  .brand .split-wm.switching{opacity:0;transform:translateX(10px);}
   /* Großer, zentraler Fortschritt: konzentrische Ringe – einer pro Übung (wie am Anfang) */
   .progress-hero{flex:1 1 auto;display:flex;align-items:center;justify-content:center;padding:12px 0;min-height:190px;}
   .big-ring{position:relative;height:100%;min-height:178px;max-height:440px;aspect-ratio:1/1;max-width:100%;}
@@ -384,11 +386,7 @@
       <div class="brand">
         <span class="wm">Training Log</span>
         <span class="streak" id="streak" style="display:none"><span class="flame">●</span><span id="streakTxt"></span></span>
-      </div>
-      <div class="title-row">
-        <div>
-          <h1 id="splitTitle">Oberkörper Druck</h1>
-        </div>
+        <span class="wm split-wm" id="splitTitle">Oberkörper Druck</span>
       </div>
     </header>
 
